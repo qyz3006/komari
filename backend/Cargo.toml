@@ -19,7 +19,7 @@ ort = { version = "2.0.0-rc.10", default-features = false, features = [
     "load-dynamic",
     "cuda",
 ] }
-opencv = { version = "0.97.2", default-features = false, features = [
+opencv = { version = "0.98.2", default-features = false, features = [
     "imgcodecs",
     "imgproc",
     "highgui",
@@ -39,6 +39,7 @@ reqwest = { version = "0.12.20", features = ["multipart"] }
 include_dir = "0.7.4"
 
 [build-dependencies]
+protoc-bin-vendored = "3"
 tonic-build = "0.13.1"
 
 [dev-dependencies]

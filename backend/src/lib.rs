@@ -8,7 +8,6 @@
 #![feature(associated_type_defaults)]
 #![feature(string_into_chars)]
 #![feature(stmt_expr_attributes)]
-#![feature(assert_matches)]
 
 use std::{
     sync::LazyLock,

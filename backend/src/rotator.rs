@@ -1,5 +1,5 @@
 use std::{
-    assert_matches::debug_assert_matches,
+    debug_assert_matches,
     collections::VecDeque,
     fmt::Debug,
     sync::{

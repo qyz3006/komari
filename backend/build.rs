@@ -11,6 +11,11 @@ macro_rules! p {
 }
 
 fn main() {
+    let protoc_path = protoc_bin_vendored::protoc_bin_path().unwrap();
+    unsafe {
+        std::env::set_var("PROTOC", protoc_path);
+    }
+
     let dir = env!("CARGO_MANIFEST_DIR").to_string();
     let dir = Path::new(&dir);
     let target_dir = dir.parent().unwrap().join("target");
