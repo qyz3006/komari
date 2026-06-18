@@ -223,6 +223,7 @@ pub struct State {
     pub frame: Option<(Vec<u8>, usize, usize)>,
     pub portals: Vec<Bound>,
     pub auto_mob_quadrant: Option<BoundQuadrant>,
+    pub rune: Option<(i32, i32)>,
 }
 
 #[derive(PartialEq, Clone, Copy, Debug)]

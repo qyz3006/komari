@@ -1,1 +1,4 @@
 /target
+/runs
+/lie_detector_training/
+/yolo_env/*

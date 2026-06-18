@@ -37,6 +37,7 @@ mod minimap;
 mod settings;
 
 const TAILWIND_CSS: Asset = asset!("public/tailwind.css");
+const TAILWIND_STYLES: &str = include_str!(env!("TAILWIND_CSS"));
 const AUTO_NUMERIC_JS: Asset = asset!("public/autoNumeric.min.js");
 const SORTABLE_JS: Asset = asset!("public/Sortable.min.js");
 const TAB_ACTIONS: &str = "Actions";
@@ -120,6 +121,7 @@ fn App() -> Element {
     });
 
     rsx! {
+        style { {TAILWIND_STYLES} }
         document::Link { rel: "stylesheet", href: TAILWIND_CSS }
         document::Script { src: AUTO_NUMERIC_JS }
         document::Script { src: SORTABLE_JS }

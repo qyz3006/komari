@@ -105,6 +105,8 @@ impl MediatorService for DefaultMediatorService {
             .map(|idle| idle.portals().into_iter().map(Into::into).collect())
             .unwrap_or_default();
 
+        let rune = idle.and_then(|idle| idle.rune()).map(|p| (p.x, p.y));
+
         let operation = match resources.operation.state {
             OperationState::TemporaryHalting { resume, .. } => Operation::TemporaryHalting(resume),
             OperationState::Halting => Operation::Halting,
@@ -146,6 +148,7 @@ impl MediatorService for DefaultMediatorService {
                 frame,
                 portals,
                 auto_mob_quadrant,
+                rune,
             };
 
             let _ = sender.send(state);

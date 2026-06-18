@@ -33,7 +33,7 @@ const MINIMAP_JS: &str = r#"
     const canvasCtx = canvas.getContext("2d");
 
     while (true) {
-        const [buffer, width, height, destinations, bound, quadrant, portals] = await dioxus.recv();
+        const [buffer, width, height, destinations, bound, quadrant, portals, rune, playerPosition] = await dioxus.recv();
         const data = new ImageData(new Uint8ClampedArray(buffer), width, height);
         const bitmap = await createImageBitmap(data);
 
@@ -74,6 +74,29 @@ const MINIMAP_JS: &str = r#"
             const h = (portal.height / height) * canvas.height;
 
             canvasCtx.strokeRect(x, y, w, h);
+        }
+
+        const circleRadius = 5;
+        canvasCtx.setLineDash([]);
+        if (rune !== null) {
+            const rx = (rune[0] / width) * canvas.width;
+            const ry = ((height - rune[1]) / height) * canvas.height;
+            canvasCtx.strokeStyle = "rgb(255, 220, 50)";
+            canvasCtx.lineWidth = 2;
+            canvasCtx.beginPath();
+            canvasCtx.arc(rx, ry, circleRadius, 0, 2 * Math.PI);
+            canvasCtx.stroke();
+            canvasCtx.lineWidth = 1;
+        }
+        if (playerPosition !== null) {
+            const px = (playerPosition[0] / width) * canvas.width;
+            const py = ((height - playerPosition[1]) / height) * canvas.height;
+            canvasCtx.strokeStyle = "rgb(255, 255, 255)";
+            canvasCtx.lineWidth = 2;
+            canvasCtx.beginPath();
+            canvasCtx.arc(px, py, circleRadius, 0, 2 * Math.PI);
+            canvasCtx.stroke();
+            canvasCtx.lineWidth = 1;
         }
 
         if (quadrant !== null && bound !== null) {
@@ -540,6 +563,8 @@ fn Canvas(
                 .map(|quadrant| quadrant.to_string());
             let frame = current_state.frame;
             let portals = current_state.portals;
+            let rune = current_state.rune;
+            let player_position = current_state.position;
             let current_state = MinimapState {
                 position: current_state.position,
                 health: current_state.health,
@@ -566,7 +591,7 @@ fn Canvas(
                 continue;
             };
             let Err(error) =
-                canvas.send((frame, width, height, destinations, bound, quadrant, portals))
+                canvas.send((frame, width, height, destinations, bound, quadrant, portals, rune, player_position))
             else {
                 continue;
             };
