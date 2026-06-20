@@ -239,6 +239,8 @@ impl Services {
 
         #[cfg(debug_assertions)]
         self.debug.poll(resources);
+        #[cfg(debug_assertions)]
+        self.debug.broadcast_rotator_debug(rotator);
         self.mediator.broadcast_state(resources, world);
     }
 }

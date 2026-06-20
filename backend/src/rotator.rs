@@ -9,6 +9,12 @@ use std::{
     time::Instant,
 };
 
+#[cfg(debug_assertions)]
+use crate::rotator_debug::{
+    ActionView, BlockReason, CondOutcome, PriorityActionView, QueueKind, RotatorDebugEvent,
+    RotatorDebugSink, RotatorSnapshot,
+};
+
 use anyhow::Result;
 use log::{debug, info};
 #[cfg(test)]
@@ -184,6 +190,18 @@ pub trait Rotator: Debug + 'static {
     /// If [`Operation`] is currently halting, it does not rotate the built actions but only the
     /// side-loaded actions added by [`Self::inject_action`].
     fn rotate_action(&mut self, resources: &mut Resources, world: &mut World);
+
+    /// Enables or disables the debug event sink.
+    ///
+    /// When disabled the sink emits no events and has zero per-tick overhead.
+    #[cfg(debug_assertions)]
+    #[cfg_attr(test, concretize)]
+    fn set_debug_enabled(&mut self, enabled: bool);
+
+    /// Drains all pending debug events accumulated since the last call.
+    #[cfg(debug_assertions)]
+    #[cfg_attr(test, concretize)]
+    fn drain_debug_events(&mut self) -> Vec<RotatorDebugEvent>;
 }
 
 #[derive(Default, Debug)]
@@ -216,6 +234,11 @@ pub struct DefaultRotator {
     /// These are actions injected externally and to be executed as appropriate with the current
     /// [`Self::priority_actions_queue`]. These actions are run only once and do not have an ID.
     priority_actions_side_queue: VecDeque<RotatorAction>,
+
+    #[cfg(debug_assertions)]
+    sink: RotatorDebugSink,
+    #[cfg(debug_assertions)]
+    snapshot_needed: bool,
 }
 
 impl DefaultRotator {
@@ -372,11 +395,46 @@ impl DefaultRotator {
             };
             if action.queue_info.ignoring {
                 action.queue_info.last_queued_time = Some(Instant::now());
+                #[cfg(debug_assertions)]
+                {
+                    let av = debug_action_view_priority(id, action);
+                    let cr = debug_cooldown_remaining_ms(
+                        action.condition_kind,
+                        action.queue_info.last_queued_time,
+                    );
+                    let at = self.sink.now_ms();
+                    self.sink.emit(RotatorDebugEvent::ConditionEvaluated {
+                        at,
+                        action: av,
+                        outcome: CondOutcome::IgnoredWhileInQueue,
+                        cooldown_remaining_ms: cr,
+                    });
+                }
                 continue;
             }
 
             let condition_fn = &mut action.condition.0;
             let result = condition_fn(resources, world, &mut action.queue_info);
+            #[cfg(debug_assertions)]
+            {
+                let av = debug_action_view_priority(id, action);
+                let outcome = match result {
+                    ConditionResult::Queue => CondOutcome::Queue,
+                    ConditionResult::Skip => CondOutcome::Skip,
+                    ConditionResult::Ignore => CondOutcome::Ignore,
+                };
+                let cr = debug_cooldown_remaining_ms(
+                    action.condition_kind,
+                    action.queue_info.last_queued_time,
+                );
+                let at = self.sink.now_ms();
+                self.sink.emit(RotatorDebugEvent::ConditionEvaluated {
+                    at,
+                    action: av,
+                    outcome,
+                    cooldown_remaining_ms: cr,
+                });
+            }
             match result {
                 ConditionResult::Queue => {
                     let conflict = if let Some(metadata) = action.metadata {
@@ -396,6 +454,20 @@ impl DefaultRotator {
                                 self.priority_actions_queue.push_back(id);
                             }
                             action.queue_info.last_queued_time = Some(Instant::now());
+                            #[cfg(debug_assertions)]
+                            {
+                                let av = debug_action_view_priority(id, action);
+                                let to_front = action.queue_to_front;
+                                let queue_len = self.priority_actions_queue.len();
+                                let at = self.sink.now_ms();
+                                self.sink.emit(RotatorDebugEvent::Enqueued {
+                                    at,
+                                    kind: QueueKind::Priority,
+                                    action: av,
+                                    queue_len,
+                                    to_front,
+                                });
+                            }
 
                             if !did_queue_erda_action {
                                 did_queue_erda_action = matches!(
@@ -486,10 +558,36 @@ impl DefaultRotator {
         if !player
             .state
             .can_override_current_state(player.context.last_known_pos)
-            || has_normal_linked_action_queuing_or_executing(self, &player.context)
-            || has_priority_linked_action_executing(self, &player.context)
-            || has_side_loaded_action_executing(&player.context)
         {
+            #[cfg(debug_assertions)]
+            self.sink.emit(RotatorDebugEvent::Blocked {
+                at: self.sink.now_ms(),
+                reason: BlockReason::CannotOverrideCurrentState,
+            });
+            return;
+        }
+        if has_normal_linked_action_queuing_or_executing(self, &player.context) {
+            #[cfg(debug_assertions)]
+            self.sink.emit(RotatorDebugEvent::Blocked {
+                at: self.sink.now_ms(),
+                reason: BlockReason::NormalLinkedActionActive,
+            });
+            return;
+        }
+        if has_priority_linked_action_executing(self, &player.context) {
+            #[cfg(debug_assertions)]
+            self.sink.emit(RotatorDebugEvent::Blocked {
+                at: self.sink.now_ms(),
+                reason: BlockReason::PriorityLinkedActionExecuting,
+            });
+            return;
+        }
+        if has_side_loaded_action_executing(&player.context) {
+            #[cfg(debug_assertions)]
+            self.sink.emit(RotatorDebugEvent::Blocked {
+                at: self.sink.now_ms(),
+                reason: BlockReason::SideLoadedActionExecuting,
+            });
             return;
         }
 
@@ -510,6 +608,11 @@ impl DefaultRotator {
             })
             .unwrap_or_default();
         if player_has_queue_to_front {
+            #[cfg(debug_assertions)]
+            self.sink.emit(RotatorDebugEvent::Blocked {
+                at: self.sink.now_ms(),
+                reason: BlockReason::QueueToFrontHeld,
+            });
             return;
         }
 
@@ -523,6 +626,9 @@ impl DefaultRotator {
         let Some(action) = self.priority_actions.get(&id) else {
             return;
         };
+
+        #[cfg(debug_assertions)]
+        let (debug_av, debug_at) = (debug_action_view_priority(id, action), self.sink.now_ms());
 
         match action.inner.clone() {
             RotatorAction::Single(inner) => {
@@ -544,6 +650,13 @@ impl DefaultRotator {
                 self.rotate_queuing_linked_action(&mut player.context, true);
             }
         }
+
+        #[cfg(debug_assertions)]
+        self.sink.emit(RotatorDebugEvent::Dispatched {
+            at: debug_at,
+            kind: QueueKind::Priority,
+            action: debug_av,
+        });
     }
 
     fn rotate_auto_mobbing(
@@ -723,6 +836,18 @@ impl DefaultRotator {
 
         debug_assert!(self.normal_index < self.normal_actions.len());
         let (id, action) = self.normal_actions[self.normal_index].clone();
+        #[cfg(debug_assertions)]
+        let (debug_av, debug_at) = (
+            ActionView {
+                id: Some(id),
+                label: debug_action_inner_label(&action),
+                condition_kind: "Any".to_string(),
+                queue_to_front: false,
+            },
+            self.sink.now_ms(),
+        );
+        #[cfg(debug_assertions)]
+        let debug_index = self.normal_index;
         self.normal_index = (self.normal_index + 1) % self.normal_actions.len();
         match action {
             RotatorAction::Single(action) => {
@@ -733,6 +858,13 @@ impl DefaultRotator {
                 self.rotate_queuing_linked_action(player_context, false);
             }
         }
+        #[cfg(debug_assertions)]
+        self.sink.emit(RotatorDebugEvent::NormalAdvanced {
+            at: debug_at,
+            index: debug_index,
+            backward: false,
+            action: debug_av,
+        });
     }
 
     fn rotate_start_to_end_then_reverse(&mut self, player_context: &mut PlayerContext) {
@@ -757,6 +889,18 @@ impl DefaultRotator {
             self.normal_index
         };
         let (id, action) = self.normal_actions[i].clone();
+        #[cfg(debug_assertions)]
+        let (debug_av, debug_at, debug_backward, debug_index) = (
+            ActionView {
+                id: Some(id),
+                label: debug_action_inner_label(&action),
+                condition_kind: "Any".to_string(),
+                queue_to_front: false,
+            },
+            self.sink.now_ms(),
+            self.normal_actions_backward,
+            i,
+        );
 
         self.normal_index = (self.normal_index + 1) % len;
         match action {
@@ -768,6 +912,13 @@ impl DefaultRotator {
                 self.rotate_queuing_linked_action(player_context, false);
             }
         }
+        #[cfg(debug_assertions)]
+        self.sink.emit(RotatorDebugEvent::NormalAdvanced {
+            at: debug_at,
+            index: debug_index,
+            backward: debug_backward,
+            action: debug_av,
+        });
     }
 
     #[inline]
@@ -798,16 +949,85 @@ impl DefaultRotator {
     fn rotate_side_priority_action(&mut self, player_context: &mut PlayerContext) -> bool {
         if let Some(action) = self.priority_actions_side_queue.pop_front() {
             debug_assert!(!player_context.has_priority_action());
+            #[cfg(debug_assertions)]
+            let debug_av = ActionView {
+                id: None,
+                label: debug_action_inner_label(&action),
+                condition_kind: "None".to_string(),
+                queue_to_front: false,
+            };
+            #[cfg(debug_assertions)]
+            let debug_at = self.sink.now_ms();
             match action {
                 RotatorAction::Single(action) => {
                     player_context.set_priority_action(None, action);
                 }
                 RotatorAction::Linked(_) => unreachable!(),
             }
+            #[cfg(debug_assertions)]
+            self.sink.emit(RotatorDebugEvent::Dispatched {
+                at: debug_at,
+                kind: QueueKind::Side,
+                action: debug_av,
+            });
             return true;
         }
 
         false
+    }
+
+    #[cfg(debug_assertions)]
+    fn build_snapshot(&self) -> RotatorSnapshot {
+        let at = self.sink.now_ms();
+
+        let priority_queue: Vec<ActionView> = self
+            .priority_actions_queue
+            .iter()
+            .filter_map(|id| {
+                self.priority_actions
+                    .get(id)
+                    .map(|a| debug_action_view_priority(*id, a))
+            })
+            .collect();
+
+        let normal_actions: Vec<ActionView> = self
+            .normal_actions
+            .iter()
+            .map(|(id, action)| ActionView {
+                id: Some(*id),
+                label: debug_action_inner_label(action),
+                condition_kind: "Any".to_string(),
+                queue_to_front: false,
+            })
+            .collect();
+
+        let priority_actions: Vec<PriorityActionView> = self
+            .priority_actions
+            .iter()
+            .map(|(id, action)| {
+                let in_queue = self.priority_actions_queue.contains(id);
+                PriorityActionView {
+                    action: debug_action_view_priority(*id, action),
+                    ignoring: action.queue_info.ignoring,
+                    cooldown_remaining_ms: debug_cooldown_remaining_ms(
+                        action.condition_kind,
+                        action.queue_info.last_queued_time,
+                    ),
+                    in_queue_or_executing: in_queue,
+                }
+            })
+            .collect();
+
+        RotatorSnapshot {
+            at,
+            priority_queue,
+            side_queue_len: self.priority_actions_side_queue.len(),
+            normal_index: self.normal_index,
+            normal_backward: self.normal_actions_backward,
+            normal_actions,
+            priority_actions,
+            player_block_reason: BlockReason::None,
+        }
     }
 }
 
@@ -978,12 +1198,34 @@ impl Rotator for DefaultRotator {
 
     #[inline]
     fn inject_action(&mut self, action: PlayerAction) {
+        #[cfg(debug_assertions)]
+        let debug_av = ActionView {
+            id: None,
+            label: debug_action_inner_label(&RotatorAction::Single(action.clone())),
+            condition_kind: "None".to_string(),
+            queue_to_front: false,
+        };
         self.priority_actions_side_queue
             .push_back(RotatorAction::Single(action));
+        #[cfg(debug_assertions)]
+        self.sink.emit(RotatorDebugEvent::Enqueued {
+            at: self.sink.now_ms(),
+            kind: QueueKind::Side,
+            action: debug_av,
+            queue_len: self.priority_actions_side_queue.len(),
+            to_front: false,
+        });
     }
 
     #[inline]
     fn rotate_action(&mut self, resources: &mut Resources, world: &mut World) {
+        #[cfg(debug_assertions)]
+        if self.snapshot_needed && self.sink.enabled {
+            let snap = self.build_snapshot();
+            self.sink.emit(RotatorDebugEvent::Snapshot(snap));
+            self.snapshot_needed = false;
+        }
+
         if resources.operation.halting() {
             if !has_side_loaded_action_executing(&world.player.context) {
                 self.rotate_side_priority_action(&mut world.player.context);
@@ -1011,11 +1253,93 @@ impl Rotator for DefaultRotator {
             }
         }
     }
+
+    #[cfg(debug_assertions)]
+    fn set_debug_enabled(&mut self, enabled: bool) {
+        self.sink.set_enabled(enabled);
+        if enabled {
+            self.snapshot_needed = true;
+        }
+    }
+
+    #[cfg(debug_assertions)]
+    fn drain_debug_events(&mut self) -> Vec<RotatorDebugEvent> {
+        if !self.sink.dirty {
+            return Vec::new();
+        }
+        self.sink.drain_pending()
+    }
 }
 
 #[inline]
 fn has_side_loaded_action_executing(player_context: &PlayerContext) -> bool {
     player_context.has_priority_action() && player_context.priority_action_id().is_none()
+}
+
+// ---------------------------------------------------------------------------
+// Debug helpers (compiled only in debug builds)
+// ---------------------------------------------------------------------------
+
+#[cfg(debug_assertions)]
+fn debug_action_inner_label(action: &RotatorAction) -> String {
+    match action {
+        RotatorAction::Single(pa) => match pa {
+            PlayerAction::SolveRune => "SolveRune".to_string(),
+            PlayerAction::SolveShape => "SolveShape".to_string(),
+            PlayerAction::SolveVioletta => "SolveVioletta".to_string(),
+            PlayerAction::FamiliarsSwap(_) => "FamiliarsSwap".to_string(),
+            PlayerAction::Panic(_) => "Panic".to_string(),
+            PlayerAction::UseBooster(b) => format!("UseBooster({:?})", b.kind),
+            PlayerAction::ExchangeBooster(_) => "ExchangeBooster".to_string(),
+            PlayerAction::Unstuck => "Unstuck".to_string(),
+            PlayerAction::AutoMob(_) => "AutoMob".to_string(),
+            PlayerAction::PingPong(_) => "PingPong".to_string(),
+            PlayerAction::Key(k) => format!("Key({:?})", k.key),
+            PlayerAction::Move(m) => format!("Move({},{})", m.position.x, m.position.y),
+        },
+        RotatorAction::Linked(la) => {
+            format!(
+                "Linked({})",
+                debug_action_inner_label(&RotatorAction::Single(la.inner.clone()))
+            )
+        }
+    }
+}
+
+#[cfg(debug_assertions)]
+fn debug_action_view_priority(id: u32, action: &PriorityAction) -> ActionView {
+    let label = match action.metadata {
+        Some(ActionMetadata::Buff { kind }) => format!("Buff({kind:?})"),
+        Some(ActionMetadata::UseBooster) => "UseBooster".to_string(),
+        None => debug_action_inner_label(&action.inner),
+    };
+    ActionView {
+        id: Some(id),
+        label,
+        condition_kind: action
+            .condition_kind
+            .map(|c| format!("{c}"))
+            .unwrap_or_else(|| "None".to_string()),
+        queue_to_front: action.queue_to_front,
+    }
+}
+
+/// Returns `target_ms - elapsed_since_last_queued`, negative means ready.
+/// Returns `None` for conditions without cooldown semantics.
+#[cfg(debug_assertions)]
+fn debug_cooldown_remaining_ms(
+    condition_kind: Option<ActionCondition>,
+    last_queued_time: Option<std::time::Instant>,
+) -> Option<i64> {
+    let target_ms: i64 = match condition_kind {
+        Some(ActionCondition::EveryMillis(n)) => n as i64,
+        Some(ActionCondition::ErdaShowerOffCooldown) => 20_000,
+        _ => return None,
+    };
+    let elapsed_ms = last_queued_time
+        .map(|t| t.elapsed().as_millis() as i64)
+        .unwrap_or(target_ms);
+    Some(target_ms - elapsed_ms)
 }
 
 /// Creates a [`RotatorAction`] with `start_action` as the initial action
