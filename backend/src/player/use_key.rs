@@ -83,6 +83,7 @@ pub struct UseKey {
     pending_transition: PendingTransition,
     action_info: Option<ActionInfo>,
     state: State,
+    pub(super) interruptible_by_priority: bool,
 }
 
 impl UseKey {
@@ -100,6 +101,7 @@ impl UseKey {
             wait_after_use_ticks,
             wait_after_use_ticks_random_range,
             wait_after_buffered,
+            interruptible_by_priority,
             ..
         } = key;
         let wait_before =
@@ -121,6 +123,7 @@ impl UseKey {
             pending_transition: PendingTransition::None,
             action_info: None,
             state: State::Precondition,
+            interruptible_by_priority,
         }
     }
 
@@ -148,6 +151,7 @@ impl UseKey {
             pending_transition: PendingTransition::None,
             action_info: Some(ActionInfo::AutoMobbing { should_terminate }),
             state: State::Precondition,
+            interruptible_by_priority: false,
         }
     }
 
@@ -181,6 +185,18 @@ impl UseKey {
             pending_transition: PendingTransition::None,
             action_info: None,
             state: State::Precondition,
+            interruptible_by_priority: false,
+        }
+    }
+
+    /// Releases the skill key if it is currently being held (during the `Using` phase).
+    ///
+    /// Called when this UseKey is interrupted by a priority action mid-hold.
+    pub(super) fn release_if_holding(&self, resources: &mut Resources) {
+        if matches!(self.state, State::Using(Using { hold_completed: false, .. }))
+            && self.key_hold_ticks > 0
+        {
+            resources.input.send_key_up(self.key);
         }
     }
 

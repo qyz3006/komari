@@ -41,6 +41,7 @@ pub struct Key {
     pub wait_after_use_ticks: u32,
     pub wait_after_use_ticks_random_range: u32,
     pub wait_after_buffered: WaitAfterBuffered,
+    pub interruptible_by_priority: bool,
 }
 
 impl fmt::Display for Key {
@@ -98,6 +99,7 @@ impl From<ActionKey> for Key {
             wait_after_use_ticks,
             wait_after_use_ticks_random_range,
             wait_after_buffered,
+            interruptible_by_priority: false,
         }
     }
 }

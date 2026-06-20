@@ -34,6 +34,8 @@ const MINIMAP_JS: &str = r#"
 
     while (true) {
         const [buffer, width, height, destinations, bound, quadrant, portals, rune, playerPosition] = await dioxus.recv();
+        canvas.width = width;
+        canvas.height = height;
         const data = new ImageData(new Uint8ClampedArray(buffer), width, height);
         const bitmap = await createImageBitmap(data);
 
@@ -171,11 +173,12 @@ const MINIMAP_JS: &str = r#"
 const MINIMAP_ACTIONS_JS: &str = r#"
     const canvas = document.getElementById("canvas-map-actions");
     const canvasCtx = canvas.getContext("2d");
-    const [width, height, actions, boundAndType, platforms] = await dioxus.recv();
+    const [width, height, actions, boundAndType, platforms, radius] = await dioxus.recv();
+    canvas.width = width;
+    canvas.height = height;
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    const anyActions = actions.filter((action) => action.condition === "Any");
-    const erdaActions = actions.filter((action) => action.condition === "ErdaShowerOffCooldown");
-    const millisActions = actions.filter((action) => action.condition === "EveryMillis");
+    const moveActions = actions.filter((action) => action.action_type === "move");
+    const keyActions = actions.filter((action) => action.action_type === "key");
 
     drawBound(canvasCtx, boundAndType);
 
@@ -191,18 +194,10 @@ const MINIMAP_ACTIONS_JS: &str = r#"
         canvasCtx.stroke();
     }
 
-    canvasCtx.setLineDash([8]);
-    canvasCtx.fillStyle = "rgb(255, 153, 128)";
-    canvasCtx.strokeStyle = "rgb(255, 153, 128)";
-    drawActions(canvas, canvasCtx, anyActions, true);
-
-    canvasCtx.fillStyle = "rgb(179, 198, 255)";
-    canvasCtx.strokeStyle = "rgb(179, 198, 255)";
-    drawActions(canvas, canvasCtx, erdaActions, true);
-
-    canvasCtx.fillStyle = "rgb(128, 255, 204)";
-    canvasCtx.strokeStyle = "rgb(128, 255, 204)";
-    drawActions(canvas, canvasCtx, millisActions, false);
+    // Move actions: blue thick circle with connecting arcs
+    drawPositionActions(canvas, canvasCtx, moveActions, "rgb(79, 195, 247)", 3, true, radius);
+    // Key+position actions: yellow circle, no arcs
+    drawPositionActions(canvas, canvasCtx, keyActions, "rgb(255, 224, 130)", 2, false, radius);
 
     function drawBound(canvasCtx, boundAndType) {
         if (boundAndType === null) {
@@ -259,32 +254,37 @@ const MINIMAP_ACTIONS_JS: &str = r#"
         canvasCtx.stroke();
     }
 
-    function drawActions(canvas, ctx, actions, hasArc) {
-        const rectSize = 4;
-        const rectHalf = rectSize / 2;
+    function drawPositionActions(canvas, ctx, actions, color, lineWidth, hasArc, radius) {
         let lastAction = null;
         let i = 1;
 
-        ctx.font = '12px sans-serif';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
 
         for (const action of actions) {
             const x = (action.x / width) * canvas.width;
             const y = ((height - action.y) / height) * canvas.height;
 
-            ctx.fillRect(x, y, rectSize, rectSize);
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.stroke();
 
-            let labelX = x + rectSize / 2;
-            let labelY = y + rectSize - 7;
-            ctx.fillText(i, labelX, labelY);
+            ctx.fillText(i, x + radius + 2, y + 4);
 
             if (hasArc && lastAction !== null) {
                 let [fromX, fromY] = lastAction;
-                drawArc(ctx, fromX + rectHalf, fromY + rectHalf, x + rectHalf, y + rectHalf);
+                ctx.setLineDash([4, 4]);
+                drawArc(ctx, fromX, fromY, x, y);
             }
 
             lastAction = [x, y];
             i++;
         }
+        ctx.lineWidth = 1;
+        ctx.setLineDash([]);
     }
     function drawArc(ctx, fromX, fromY, toX, toY) {
         const cx = (fromX + toX) / 2;
@@ -305,6 +305,7 @@ struct ActionView {
     x: i32,
     y: i32,
     condition: String,
+    action_type: String,
 }
 
 #[derive(PartialEq, Clone, Debug)]
@@ -509,7 +510,25 @@ fn Canvas(
         }
     });
 
+    // Tracks the actual captured minimap pixel dimensions for 1:1 display.
+    let mut minimap_size = use_signal(|| Option::<(usize, usize)>::None);
+
+    // Action circle radius (in minimap pixels) = the selected character's move tolerance, so
+    // the drawn circle visually matches the movement arrival zone. Defaults to 5 when no
+    // character is selected. The memo dedupes, so the actions effect only re-runs on change.
+    let character = use_context::<AppState>().character;
+    let move_tolerance = use_memo(move || character().map(|c| c.move_tolerance).unwrap_or(5));
+
     use_effect(move || {
+        // Use the live detected frame dimensions, NOT the saved map.width/height (which can
+        // be 0 and would collapse the canvas to 0x0 / produce NaN coordinates). This also
+        // keeps the actions canvas perfectly aligned with the background canvas, which is
+        // sized from the same frame. Re-runs when the size changes so circles (re)draw once
+        // the minimap appears.
+        let Some((width, height)) = minimap_size() else {
+            return;
+        };
+        let radius = move_tolerance();
         let bound_and_type = rotation_bound_and_type();
         let preset = map_preset();
         let Some(map) = map() else {
@@ -524,8 +543,13 @@ fn Canvas(
                     position: Position { x, y, .. },
                     condition,
                     ..
-                })
-                | Action::Key(ActionKey {
+                }) => Some(ActionView {
+                    x,
+                    y,
+                    condition: condition.to_string(),
+                    action_type: "move".to_string(),
+                }),
+                Action::Key(ActionKey {
                     position: Some(Position { x, y, .. }),
                     condition,
                     ..
@@ -533,6 +557,7 @@ fn Canvas(
                     x,
                     y,
                     condition: condition.to_string(),
+                    action_type: "key".to_string(),
                 }),
                 _ => None,
             })
@@ -541,11 +566,12 @@ fn Canvas(
         spawn(async move {
             let canvas = document::eval(MINIMAP_ACTIONS_JS);
             let _ = canvas.send((
-                map.width,
-                map.height,
+                width,
+                height,
                 actions,
                 bound_and_type,
                 map.platforms,
+                radius,
             ));
         });
     });
@@ -588,8 +614,14 @@ fn Canvas(
                 .deref()
                 .map(|(bound, _)| bound);
             let Some((frame, width, height)) = frame else {
+                if minimap_size.peek().is_some() {
+                    minimap_size.set(None);
+                }
                 continue;
             };
+            if *minimap_size.peek() != Some((width, height)) {
+                minimap_size.set(Some((width, height)));
+            }
             let Err(error) =
                 canvas.send((frame, width, height, destinations, bound, quadrant, portals, rune, player_position))
             else {
@@ -602,15 +634,40 @@ fn Canvas(
         }
     });
 
+    let (canvas_w, canvas_h) = minimap_size().unwrap_or((0, 0));
+    let has_minimap = canvas_w > 0 && canvas_h > 0;
+    // Inline styles (not utility classes) for the critical constraints:
+    // min-width:0 lets this flex child shrink below content width; max-width:100% keeps it
+    // within the 320px panel; overflow:auto scrolls a larger map instead of spilling onto
+    // the Tabs nav to the right; max-height caps vertical growth.
+    // h-24 isn't compiled in tailwind.css, so set the height inline as well.
+    let placeholder_style = if has_minimap {
+        "display: none;".to_string()
+    } else {
+        "height: 6rem; color: var(--color-muted-foreground, #6b7280);".to_string()
+    };
     rsx! {
-        div { class: "relative h-31 rounded-2xl bg-secondary-surface",
-            canvas {
-                class: "absolute inset-0 rounded-2xl w-full h-full",
-                id: "canvas-map",
+        div {
+            class: "rounded-2xl bg-secondary-surface",
+            style: "min-width: 0; max-width: 100%; max-height: 13rem; overflow: auto;",
+            // Placeholder is kept in the DOM (toggled via display) so the canvases below are
+            // never reconciled away — removing a sibling would wipe their drawn bitmaps.
+            div {
+                class: "flex items-center justify-center text-sm rounded-2xl",
+                style: "{placeholder_style}",
+                "No minimap detected"
             }
-            canvas {
-                class: "absolute inset-0 rounded-2xl w-full h-full",
-                id: "canvas-map-actions",
+            // Real-pixel-size content box; the two canvases stack via absolute positioning.
+            div {
+                style: "position: relative; width: {canvas_w}px; height: {canvas_h}px;",
+                canvas {
+                    id: "canvas-map",
+                    style: "position: absolute; top: 0; left: 0; width: {canvas_w}px; height: {canvas_h}px; border-radius: 1rem;",
+                }
+                canvas {
+                    id: "canvas-map-actions",
+                    style: "position: absolute; top: 0; left: 0; width: {canvas_w}px; height: {canvas_h}px; border-radius: 1rem;",
+                }
             }
         }
     }

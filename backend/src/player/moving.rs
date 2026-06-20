@@ -277,10 +277,12 @@ pub fn update_moving_state(
     let cur_pos = context.last_known_pos.unwrap();
     let moving = Moving::new(cur_pos, dest, exact, intermediates);
     let is_intermediate = moving.is_destination_intermediate();
-    let skip_destination = moving.auto_mob_can_skip_current_destination(context);
-
     let (x_distance, _) = moving.x_distance_direction_from(true, cur_pos);
     let (y_distance, y_direction) = moving.y_distance_direction_from(true, cur_pos);
+
+    let move_tolerance = context.config.move_tolerance;
+    let skip_destination = moving.auto_mob_can_skip_current_destination(context)
+        || (!exact && x_distance < move_tolerance && y_distance < move_tolerance);
 
     let disable_double_jumping = context.config.disable_double_jumping;
     let disable_adjusting = context.config.disable_adjusting;
@@ -302,9 +304,15 @@ pub fn update_moving_state(
         );
     }
 
+    // For non-exact moves, only fine-adjust X while it is outside the move tolerance, so the
+    // Y-axis movement (grapple/up jump/jump/fall) can begin as soon as X is within tolerance
+    // instead of waiting until X reaches the exact center. Clamp to ADJUSTING_MEDIUM_THRESHOLD
+    // so a small tolerance can't trigger a no-op walk (Adjusting can't walk below it).
+    let adjust_threshold = move_tolerance.max(ADJUSTING_MEDIUM_THRESHOLD);
+
     // Check to adjust and allow disabling adjusting only if `exact` is false
     if !skip_destination
-        && ((!disable_adjusting && x_distance >= ADJUSTING_MEDIUM_THRESHOLD)
+        && ((!disable_adjusting && x_distance >= adjust_threshold)
             || (exact && x_distance >= ADJUSTING_SHORT_THRESHOLD))
     {
         return abort_action_on_state_repeat(

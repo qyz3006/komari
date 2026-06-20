@@ -34,6 +34,8 @@ pub struct Settings {
     pub platform_end_key: KeyBindingConfiguration,
     #[serde(default = "platform_add_key_default")]
     pub platform_add_key: KeyBindingConfiguration,
+    #[serde(default = "action_move_add_key_default")]
+    pub action_move_add_key: KeyBindingConfiguration,
 }
 
 impl Default for Settings {
@@ -56,6 +58,7 @@ impl Default for Settings {
             platform_start_key: platform_start_key_default(),
             platform_end_key: platform_end_key_default(),
             platform_add_key: platform_add_key_default(),
+            action_move_add_key: action_move_add_key_default(),
         }
     }
 }
@@ -98,6 +101,13 @@ fn platform_end_key_default() -> KeyBindingConfiguration {
 fn platform_add_key_default() -> KeyBindingConfiguration {
     KeyBindingConfiguration {
         key: KeyBinding::L,
+        enabled: false,
+    }
+}
+
+fn action_move_add_key_default() -> KeyBindingConfiguration {
+    KeyBindingConfiguration {
+        key: KeyBinding::Semicolon,
         enabled: false,
     }
 }

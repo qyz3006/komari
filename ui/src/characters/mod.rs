@@ -552,6 +552,19 @@ fn SectionMovement() -> Element {
                     tooltip: "Not applicable if an action requires adjusting.",
                     disabled,
                 }
+                CharactersNumberU32Input {
+                    label: "Move tolerance",
+                    value: character().move_tolerance,
+                    max_value: 50,
+                    tooltip: "Pixel radius for considering a move as arrived. Values above 25 for normal classes or 12 for mages may cause movement issues, as the character may double jump within the tolerance instead of moving along the Y axis.",
+                    on_value: move |move_tolerance| {
+                        save_character(Character {
+                            move_tolerance,
+                            ..character.peek().clone()
+                        });
+                    },
+                    disabled: disabled(),
+                }
             }
         }
     }
@@ -920,10 +933,17 @@ fn CharactersNumberU32Input(
     value: u32,
     on_value: Callback<u32>,
     #[props(default)] max_value: Option<u32>,
+    #[props(default)] tooltip: Option<String>,
+    #[props(default = ContentSide::Top)] tooltip_side: ContentSide,
+    #[props(default = ContentAlign::Center)] tooltip_align: ContentAlign,
     #[props(default)] disabled: bool,
 ) -> Element {
     rsx! {
-        Labeled { label,
+        Labeled {
+            label,
+            tooltip,
+            tooltip_side,
+            tooltip_align,
             PrimitiveIntegerInput {
                 value,
                 on_value,
