@@ -41,6 +41,8 @@ mod pathing;
 mod player;
 mod rng;
 mod rotator;
+#[cfg(debug_assertions)]
+mod rotator_debug;
 mod run;
 mod services;
 mod skill;
@@ -55,6 +57,12 @@ pub use {
     pathing::MAX_PLATFORMS_COUNT,
     run::init,
     strum::{EnumMessage, IntoEnumIterator, ParseError},
+};
+
+#[cfg(debug_assertions)]
+pub use rotator_debug::{
+    ActionView, BlockReason, CondOutcome, PriorityActionView, QueueKind, RotatorDebugEvent,
+    RotatorSnapshot,
 };
 
 type PendingRequest = (Request, Sender<Response>);
@@ -119,6 +127,10 @@ enum Request {
     #[cfg(debug_assertions)]
     DebugStateReceiver,
     #[cfg(debug_assertions)]
+    RotatorDebugReceiver,
+    #[cfg(debug_assertions)]
+    SetRotatorDebugEnabled(bool),
+    #[cfg(debug_assertions)]
     AutoSaveRune(bool),
     #[cfg(debug_assertions)]
     AutoRecordLieDetector(bool),
@@ -153,6 +165,10 @@ enum Response {
     SaveCaptureImage,
     #[cfg(debug_assertions)]
     DebugStateReceiver(broadcast::Receiver<DebugState>),
+    #[cfg(debug_assertions)]
+    RotatorDebugReceiver(broadcast::Receiver<Vec<RotatorDebugEvent>>),
+    #[cfg(debug_assertions)]
+    SetRotatorDebugEnabled,
     #[cfg(debug_assertions)]
     AutoSaveRune,
     #[cfg(debug_assertions)]
@@ -397,6 +413,16 @@ pub async fn save_capture_image(is_grayscale: bool) {
 #[cfg(debug_assertions)]
 pub async fn debug_state_receiver() -> broadcast::Receiver<DebugState> {
     send_request!(DebugStateReceiver => (receiver))
+}
+
+#[cfg(debug_assertions)]
+pub async fn rotator_debug_event_receiver() -> broadcast::Receiver<Vec<RotatorDebugEvent>> {
+    send_request!(RotatorDebugReceiver => (receiver))
+}
+
+#[cfg(debug_assertions)]
+pub async fn set_rotator_debug_enabled(enabled: bool) {
+    send_request!(SetRotatorDebugEnabled(enabled))
 }
 
 #[cfg(debug_assertions)]

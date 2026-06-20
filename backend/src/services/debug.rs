@@ -26,12 +26,13 @@ use tokio::{
 };
 
 use crate::{
-    DebugState, TransparentShapeDifficulty,
+    DebugState, RotatorDebugEvent, TransparentShapeDifficulty,
     bridge::{Input, MouseKind},
     detect::DefaultDetector,
     ecs::Resources,
     mat::OwnedMat,
     models::Localization,
+    rotator::Rotator,
     run::FPS,
     solvers::{RuneSolver, TransparentShapeSolver, ViolettaSolver},
     utils::DatasetDir,
@@ -40,6 +41,7 @@ use crate::{
 #[derive(Debug)]
 pub struct DebugService {
     state: Sender<DebugState>,
+    rotator_events: Sender<Vec<RotatorDebugEvent>>,
     writer: Option<VideoWriter>,
 }
 
@@ -47,6 +49,7 @@ impl Default for DebugService {
     fn default() -> Self {
         Self {
             state: broadcast::channel(1).0,
+            rotator_events: broadcast::channel(16).0,
             writer: None,
         }
     }
@@ -71,6 +74,22 @@ impl DebugService {
 
     pub fn subscribe_state(&self) -> Receiver<DebugState> {
         self.state.subscribe()
+    }
+
+    pub fn subscribe_rotator_events(&self) -> Receiver<Vec<RotatorDebugEvent>> {
+        self.rotator_events.subscribe()
+    }
+
+    /// Drains pending debug events from the rotator and broadcasts them.
+    /// No-op when there are no active subscribers or the sink is not dirty.
+    pub fn broadcast_rotator_debug(&self, rotator: &mut dyn Rotator) {
+        if self.rotator_events.receiver_count() == 0 {
+            return;
+        }
+        let events = rotator.drain_debug_events();
+        if !events.is_empty() {
+            let _ = self.rotator_events.send(events);
+        }
     }
 
     pub fn record_video(&mut self, resources: &mut Resources, start: bool) {

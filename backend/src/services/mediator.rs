@@ -217,6 +217,15 @@ fn handle_ui_request(
         #[cfg(debug_assertions)]
         Request::DebugStateReceiver => Response::DebugStateReceiver(subscribe_debug_state(context)),
         #[cfg(debug_assertions)]
+        Request::RotatorDebugReceiver => {
+            Response::RotatorDebugReceiver(context.debug_service.subscribe_rotator_events())
+        }
+        #[cfg(debug_assertions)]
+        Request::SetRotatorDebugEnabled(enabled) => {
+            context.rotator.set_debug_enabled(enabled);
+            Response::SetRotatorDebugEnabled
+        }
+        #[cfg(debug_assertions)]
         Request::AutoSaveRune(auto_save) => {
             context.resources.debug.auto_save_rune = auto_save;
             Response::AutoSaveRune
