@@ -437,6 +437,16 @@ fn SectionHotkeys() -> Element {
                     },
                     value: settings().platform_end_key,
                 }
+                Hotkey {
+                    label: "Add move action",
+                    on_value: move |action_move_add_key| {
+                        save_settings(Settings {
+                            action_move_add_key,
+                            ..settings.peek().clone()
+                        });
+                    },
+                    value: settings().action_move_add_key,
+                }
             }
         }
     }

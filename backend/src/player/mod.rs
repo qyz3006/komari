@@ -147,11 +147,11 @@ impl Player {
             | Player::Jumping(moving)
             | Player::UpJumping(UpJumping { moving, .. })
             | Player::Falling(Falling { moving, .. }) => moving.completed,
+            Player::UseKey(use_key) => use_key.interruptible_by_priority,
             Player::SolvingRune(_)
             | Player::CashShopThenExit(_)
             | Player::Unstucking(_)
             | Player::DoubleJumping(DoubleJumping { forced: true, .. })
-            | Player::UseKey(_)
             | Player::FamiliarsSwapping(_)
             | Player::Panicking(_)
             | Player::UsingBooster(_)
@@ -215,6 +215,11 @@ pub fn run_system(
     }
 
     if player.context.reset_to_idle_next_update {
+        if let Player::UseKey(use_key) = &player.state {
+            if use_key.interruptible_by_priority {
+                use_key.release_if_holding(resources);
+            }
+        }
         player.context.reset_to_idle_next_update = false;
         player.state = Player::Idle;
     }

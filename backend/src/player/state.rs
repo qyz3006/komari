@@ -177,6 +177,8 @@ pub struct PlayerConfiguration {
     pub disable_double_jumping: bool,
     /// Whether to disable [`Player::Adjusting`].
     pub disable_adjusting: bool,
+    /// Pixel tolerance for considering a non-exact move as arrived (skips fine adjustment).
+    pub move_tolerance: i32,
     /// Whether to disable teleportation in [`Player::Falling`].
     pub disable_teleport_on_fall: bool,
     /// Whether to disable grappling in [`Player::DoubleJump`] when near the destination.
@@ -233,6 +235,7 @@ impl Default for PlayerConfiguration {
             has_extended_teleport_range: false,
             disable_double_jumping: false,
             disable_adjusting: false,
+            move_tolerance: 5,
             disable_teleport_on_fall: false,
             disable_grapple_on_double_jumping: false,
             up_jump_is_flight: false,

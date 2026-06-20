@@ -75,6 +75,9 @@ pub struct Character {
     #[serde(default)]
     pub disable_double_jumping: bool,
     pub disable_adjusting: bool,
+    /// Pixel tolerance for a non-exact (non-adjusting) move to count as arrived.
+    #[serde(default = "move_tolerance_default")]
+    pub move_tolerance: u32,
     #[serde(default)]
     pub disable_teleport_on_fall: bool,
     #[serde(default)]
@@ -143,6 +146,7 @@ impl Default for Character {
             link_key_timing_millis: 0,
             disable_double_jumping: false,
             disable_adjusting: false,
+            move_tolerance: move_tolerance_default(),
             disable_teleport_on_fall: false,
             disable_grapple_on_double_jumping: false,
             up_jump_is_flight: false,
@@ -161,6 +165,10 @@ fn feed_pet_count_default() -> u32 {
 
 fn hexa_booster_exchange_amount_default() -> u32 {
     1
+}
+
+fn move_tolerance_default() -> u32 {
+    5
 }
 
 fn jump_key_default() -> KeyBindingConfiguration {

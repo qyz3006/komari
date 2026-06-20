@@ -1,8 +1,12 @@
 use std::{collections::HashMap, fmt::Display, mem::discriminant};
 
-use backend::{Action, ActionCondition, IntoEnumIterator, KeyBinding, Map, update_map, upsert_map};
+use backend::{
+    Action, ActionCondition, ActionMove, IntoEnumIterator, KeyBinding, Map, Position, key_receiver,
+    update_map, upsert_map,
+};
 use dioxus::prelude::*;
 use futures_util::StreamExt;
+use tokio::sync::broadcast::error::RecvError;
 use inner::SectionActions;
 use platforms::SectionPlatforms;
 use rotation::SectionRotation;
@@ -154,6 +158,44 @@ pub fn ActionsScreen() -> Element {
 
         map_preset.set(Some(selected));
         coroutine.send(ActionsUpdate::Set);
+    });
+
+    // Hotkey: append a normal Move action at the current player position to the selected
+    // preset. Mirrors the platform add hotkey in `SectionPlatforms`.
+    let settings = use_context::<AppState>().settings;
+    let position = use_context::<AppState>().position;
+    use_future(move || async move {
+        let mut key_receiver = key_receiver().await;
+        loop {
+            let key = match key_receiver.recv().await {
+                Ok(value) => value,
+                Err(RecvError::Closed) => break,
+                Err(RecvError::Lagged(_)) => continue,
+            };
+            let Some(settings) = &*settings.peek() else {
+                continue;
+            };
+            if !settings.action_move_add_key.enabled || settings.action_move_add_key.key != key {
+                continue;
+            }
+            if map_preset.peek().is_none() {
+                continue;
+            }
+
+            let (x, y) = *position.peek();
+            let mut actions = map_preset_actions.peek().clone();
+            actions.push(Action::Move(ActionMove {
+                position: Position {
+                    x,
+                    x_random_range: 0,
+                    y,
+                    allow_adjusting: false,
+                },
+                condition: ActionCondition::Any,
+                wait_after_move_millis: 0,
+            }));
+            coroutine.send(ActionsUpdate::Update(actions));
+        }
     });
 
     let lists = use_signal::<HashMap<String, ActionCondition>>(HashMap::default);

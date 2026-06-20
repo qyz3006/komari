@@ -850,6 +850,10 @@ impl DefaultRotator {
         let debug_index = self.normal_index;
         self.normal_index = (self.normal_index + 1) % self.normal_actions.len();
         match action {
+            RotatorAction::Single(PlayerAction::Key(mut key)) => {
+                key.interruptible_by_priority = true;
+                player_context.set_normal_action(Some(id), PlayerAction::Key(key));
+            }
             RotatorAction::Single(action) => {
                 player_context.set_normal_action(Some(id), action);
             }
@@ -904,6 +908,10 @@ impl DefaultRotator {
 
         self.normal_index = (self.normal_index + 1) % len;
         match action {
+            RotatorAction::Single(PlayerAction::Key(mut key)) => {
+                key.interruptible_by_priority = true;
+                player_context.set_normal_action(Some(id), PlayerAction::Key(key));
+            }
             RotatorAction::Single(action) => {
                 player_context.set_normal_action(Some(id), action);
             }
@@ -1475,6 +1483,7 @@ fn familiar_essence_replenish_priority_action(key: KeyKind) -> PriorityAction {
             wait_after_use_ticks: 0,
             wait_after_use_ticks_random_range: 0,
             wait_after_buffered: WaitAfterBuffered::None,
+            interruptible_by_priority: false,
         })),
         queue_to_front: true,
         queue_info: PriorityActionQueueInfo::default(),
@@ -1677,6 +1686,7 @@ fn buff_priority_action(buff: BuffKind, key: KeyKind) -> PriorityAction {
             wait_after_use_ticks: 10,
             wait_after_use_ticks_random_range: 0,
             wait_after_buffered: WaitAfterBuffered::None,
+            interruptible_by_priority: false,
         })),
         metadata: Some(ActionMetadata::Buff { kind: buff }),
         queue_to_front: true,
@@ -1760,6 +1770,7 @@ fn elite_boss_use_key_priority_action(key: KeyKind) -> PriorityAction {
             wait_after_use_ticks: 10,
             wait_after_use_ticks_random_range: 0,
             wait_after_buffered: WaitAfterBuffered::None,
+            interruptible_by_priority: false,
         })),
         metadata: None,
         queue_to_front: true,

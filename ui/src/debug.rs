@@ -105,8 +105,8 @@ pub fn DebugScreen() -> Element {
                     }
                 }
             }
+            RotatorDebugPanel {}
         }
-        RotatorDebugPanel {}
     }
 }
 

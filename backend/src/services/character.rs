@@ -36,6 +36,7 @@ impl CharacterService for DefaultCharacterService {
                 character.has_extended_teleport_range;
             player_context.config.disable_double_jumping = character.disable_double_jumping;
             player_context.config.disable_adjusting = character.disable_adjusting;
+            player_context.config.move_tolerance = character.move_tolerance as i32;
             player_context.config.disable_teleport_on_fall = character.disable_teleport_on_fall;
             player_context.config.disable_grapple_on_double_jumping =
                 character.disable_grapple_on_double_jumping;
@@ -170,6 +171,10 @@ mod tests {
             character.disable_double_jumping
         );
         assert_eq!(state.config.disable_adjusting, character.disable_adjusting);
+        assert_eq!(
+            state.config.move_tolerance,
+            character.move_tolerance as i32
+        );
         assert_eq!(
             state.config.disable_teleport_on_fall,
             character.disable_teleport_on_fall
