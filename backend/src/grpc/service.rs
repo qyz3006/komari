@@ -156,6 +156,7 @@ impl InputService {
         !matches!((was_down, is_down), (true, true) | (false, false))
     }
 
+    #[allow(clippy::result_large_err)]
     fn with_client<F>(&mut self, f: F)
     where
         F: FnOnce(&mut KeyInputClient<Channel>) -> Result<(), Status>,
