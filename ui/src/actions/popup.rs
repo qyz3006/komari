@@ -214,6 +214,12 @@ pub fn PopupMobbingBoundInputContent(
         })));
     });
 
+    use_drop(move || {
+        if let Some(task) = task.take() {
+            task.cancel();
+        }
+    });
+
     rsx! {
         PopupContent { title: "Modify mobbing bound",
             if frame().is_some() {

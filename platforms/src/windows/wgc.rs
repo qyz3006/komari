@@ -5,7 +5,7 @@
 use std::{
     cmp::min,
     mem, slice,
-    sync::{Arc, Mutex, mpsc},
+    sync::{Arc, Condvar, Mutex, mpsc},
 };
 
 use windows::{
@@ -88,13 +88,27 @@ struct WgcCaptureInner {
     frame_pool: Direct3D11CaptureFramePool,
     frame_last_content_size: SizeInt32,
     frame_arrived_token: i64,
-    frame_rx: mpsc::Receiver<Message>,
+    /// Mailbox holding at most the **latest** captured frame (or an item-closed
+    /// signal). The `FrameArrived` callback fires at display refresh rate, which
+    /// can far exceed the consumer's 30 FPS tick. Buffering every frame in an
+    /// unbounded queue would pin D3D11 textures (GPU + system memory) until the
+    /// process runs out of memory, so we only ever retain the most recent frame.
+    frame: Arc<(Mutex<Option<Message>>, Condvar)>,
 }
 
 impl WgcCaptureInner {
     fn grab(&mut self) -> Result<Frame> {
         let handle = *self.handle.as_inner();
-        let message = self.frame_rx.recv().unwrap();
+        let message = {
+            let (lock, cvar) = &*self.frame;
+            let mut guard = lock.lock().unwrap();
+            loop {
+                if let Some(message) = guard.take() {
+                    break message;
+                }
+                guard = cvar.wait(guard).unwrap();
+            }
+        };
 
         let frame = match message {
             Message::FrameArrived(frame) => frame,
@@ -274,30 +288,44 @@ impl WgcCapture {
         let (pending_tx, pending_rx) = mpsc::channel::<()>();
 
         let _ = queue.TryEnqueue(&DispatcherQueueHandler::new(move || {
-            let (tx, rx) = mpsc::channel::<Message>();
+            let frame = Arc::new((Mutex::new(None::<Message>), Condvar::new()));
             let frame_format = DirectXPixelFormat::B8G8R8A8UIntNormalized;
 
             let Ok(item) = create_graphics_capture_item(*handle.as_inner()) else {
                 return Ok(()); // Avoids crash when open game after bot
             };
-            let item_closed_tx = tx.clone();
+            let item_closed_frame = frame.clone();
             let item_closed_token = item.Closed(&TypedEventHandler::new(move |_, _| {
-                item_closed_tx.send(Message::ItemClosed).unwrap();
+                let (lock, cvar) = &*item_closed_frame;
+                *lock.lock().unwrap() = Some(Message::ItemClosed);
+                cvar.notify_one();
                 Ok(())
             }))?;
 
             let frame_last_content_size = item.Size()?;
             let (session, frame_pool) =
                 create_capture_session(d3d_device.as_inner(), &item, frame_format)?;
+            let frame_arrived_frame = frame.clone();
             let frame_arrived_token = frame_pool.FrameArrived(&TypedEventHandler::<
                 Direct3D11CaptureFramePool,
                 _,
             >::new(
                 move |frame_pool, _| {
-                    tx.send(Message::FrameArrived(
-                        frame_pool.as_ref().unwrap().TryGetNextFrame().unwrap(),
-                    ))
-                    .unwrap();
+                    let frame = frame_pool.as_ref().unwrap().TryGetNextFrame().unwrap();
+                    let (lock, cvar) = &*frame_arrived_frame;
+                    let mut guard = lock.lock().unwrap();
+                    // Keep only the most recent frame; replacing the previous
+                    // one drops its `Direct3D11CaptureFrame` (releasing the GPU
+                    // texture) instead of buffering frames without bound.
+                    // Never overwrite an already-pending `ItemClosed`: the old
+                    // FIFO queue always delivered the close last, so capture
+                    // could terminate. With a last-writer-wins mailbox a late
+                    // frame would otherwise clobber the close signal and leak
+                    // the capture forever.
+                    if !matches!(*guard, Some(Message::ItemClosed)) {
+                        *guard = Some(Message::FrameArrived(frame));
+                    }
+                    cvar.notify_one();
                     Ok(())
                 },
             ))?;
@@ -318,7 +346,7 @@ impl WgcCapture {
                 frame_pool,
                 frame_last_content_size,
                 frame_arrived_token,
-                frame_rx: rx,
+                frame,
             };
             *inner_arc.lock().unwrap() = Some(inner);
             let _ = pending_tx.send(());

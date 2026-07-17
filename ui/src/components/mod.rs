@@ -8,7 +8,7 @@ use std::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
-use dioxus::{document::EvalError, prelude::*};
+use dioxus::{core::Task, document::EvalError, prelude::*};
 
 pub mod button;
 pub mod checkbox;
@@ -94,7 +94,13 @@ fn use_auto_numeric<T>(
 where
     T: PartialEq + Clone + Display + FromStr + 'static,
 {
+    let mut task = use_signal(|| None::<Task>);
+
     use_effect(move || {
+        if let Some(task) = task.take() {
+            task.cancel();
+        }
+
         let initial_value = initial_value.peek().clone();
         let script = format!(
             r#"
@@ -118,7 +124,7 @@ where
         );
         let mut eval = document::eval(script.as_str());
 
-        spawn(async move {
+        task.set(Some(spawn(async move {
             loop {
                 let result = eval.recv::<String>().await;
                 match result {
@@ -133,7 +139,13 @@ where
                     Err(_) => break,
                 }
             }
-        });
+        })));
+    });
+
+    use_drop(move || {
+        if let Some(task) = task.take() {
+            task.cancel();
+        }
     });
 
     use_callback(move |value: T| {
