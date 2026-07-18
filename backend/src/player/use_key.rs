@@ -366,7 +366,7 @@ pub fn update_use_key_state(
                 return;
             }
 
-            assert_matches!(player_next_state, Player::Idle);
+            crate::assert_matches!(player_next_state, Player::Idle);
             player.context.clear_action_completed();
             player.state = player_next_state;
         }
@@ -737,7 +737,7 @@ mod tests {
 
         // Start EnsuringUseWith
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::EnsuringUseWith,
@@ -748,7 +748,7 @@ mod tests {
         // Complete EnsuringUseWith when stationary
         player.context.is_stationary = true;
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Precondition,
@@ -781,7 +781,7 @@ mod tests {
 
         // Start EnsuringUseWith
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::EnsuringUseWith,
@@ -791,7 +791,7 @@ mod tests {
 
         // Transitions to double jump
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::DoubleJumping(DoubleJumping { forced: true, .. })
         );
@@ -828,7 +828,7 @@ mod tests {
 
         // Transition into ChangingDirection
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::ChangingDirection(Timeout { started: false, .. }),
@@ -838,7 +838,7 @@ mod tests {
 
         // Sends down on started
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::ChangingDirection(Timeout { started: true, .. }),
@@ -854,11 +854,11 @@ mod tests {
         });
         player = make_player(use_key);
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.context.last_known_direction,
             ActionKeyDirection::Left
         );
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Precondition,
@@ -895,7 +895,7 @@ mod tests {
 
         for i in 0..3 {
             update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-            assert_matches!(
+            crate::assert_matches!(
                 player.state,
                 Player::UseKey(UseKey {
                     state: State::Using(_),
@@ -904,7 +904,7 @@ mod tests {
             );
 
             update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-            assert_matches!(
+            crate::assert_matches!(
                 player.state,
                 Player::UseKey(UseKey {
                     state: State::Postcondition,
@@ -914,9 +914,9 @@ mod tests {
 
             update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
             if i == 2 {
-                assert_matches!(player.state, Player::Idle);
+                crate::assert_matches!(player.state, Player::Idle);
             } else {
-                assert_matches!(
+                crate::assert_matches!(
                     player.state,
                     Player::UseKey(UseKey {
                         state: State::Precondition,
@@ -951,8 +951,8 @@ mod tests {
 
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Stalling(_, 5));
-        assert_matches!(
+        crate::assert_matches!(player.state, Player::Stalling(_, 5));
+        crate::assert_matches!(
             player.context.stalling_timeout_state,
             Some(Player::UseKey(UseKey {
                 state: State::Using(_),
@@ -990,8 +990,8 @@ mod tests {
 
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Stalling(_, 7));
-        assert_matches!(
+        crate::assert_matches!(player.state, Player::Stalling(_, 7));
+        crate::assert_matches!(
             player.context.stalling_timeout_state,
             Some(Player::UseKey(UseKey {
                 state: State::Postcondition,
@@ -1039,7 +1039,7 @@ mod tests {
 
         // Hold Alt
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Using(Using {
@@ -1061,7 +1061,7 @@ mod tests {
         });
         player = make_player(use_key);
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Using(Using {
@@ -1083,7 +1083,7 @@ mod tests {
         });
         player = make_player(use_key);
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Using(Using {
@@ -1130,7 +1130,7 @@ mod tests {
 
         // Press Alt
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Using(Using {
@@ -1186,7 +1186,7 @@ mod tests {
 
         // Press A
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Using(Using {
@@ -1247,7 +1247,7 @@ mod tests {
 
         // Press Alt then A
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Postcondition,
@@ -1334,7 +1334,7 @@ mod tests {
         let mut player = make_player(use_key);
 
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UseKey(UseKey {
                 state: State::Using(Using {
@@ -1346,7 +1346,7 @@ mod tests {
         );
 
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.context.stalling_buffered,
             BufferedStalling::Interruptible(_, 6)
         );
@@ -1432,7 +1432,7 @@ mod tests {
                 .stalling_timeout_buffered_end_callback
                 .is_none()
         );
-        assert_matches!(
+        crate::assert_matches!(
             player.context.stalling_timeout_state,
             Some(Player::UseKey(UseKey {
                 state: State::Postcondition,
@@ -1447,7 +1447,7 @@ mod tests {
         });
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting); // hold
         update_use_key_state(&mut resources, &mut player, Minimap::Detecting); // buffer
-        assert_matches!(
+        crate::assert_matches!(
             player.context.stalling_buffered,
             BufferedStalling::Uninterruptible(_, _)
         );

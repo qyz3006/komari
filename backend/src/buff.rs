@@ -303,7 +303,7 @@ mod tests {
 
             run_system_until_task_completed(&mut resources, &mut buff).await;
 
-            assert_matches!(buff.state, Buff::Yes);
+            crate::assert_matches!(buff.state, Buff::Yes);
             assert_eq!(buff.context.fail_count, 0);
         }
     }
@@ -321,19 +321,19 @@ mod tests {
 
             // First failure: Yes -> Volatile
             run_system_until_task_completed(&mut resources, &mut buff).await;
-            assert_matches!(buff.state, Buff::Volatile);
+            crate::assert_matches!(buff.state, Buff::Volatile);
             assert_eq!(buff.context.fail_count, 0);
 
             // Second failure: Volatile -> still Volatile
             buff.context.task = None;
             run_system_until_task_completed(&mut resources, &mut buff).await;
-            assert_matches!(buff.state, Buff::Volatile);
+            crate::assert_matches!(buff.state, Buff::Volatile);
             assert_eq!(buff.context.fail_count, 1);
 
             // Third failure: Volatile -> No (fail_count reached max)
             buff.context.task = None;
             run_system_until_task_completed(&mut resources, &mut buff).await;
-            assert_matches!(buff.state, Buff::No);
+            crate::assert_matches!(buff.state, Buff::No);
             assert_eq!(buff.context.fail_count, 2);
         }
     }
@@ -352,7 +352,7 @@ mod tests {
 
             run_system_until_task_completed(&mut resources, &mut buff).await;
 
-            assert_matches!(buff.state, Buff::Yes);
+            crate::assert_matches!(buff.state, Buff::Yes);
             assert_eq!(buff.context.fail_count, 0);
         }
     }
@@ -371,7 +371,7 @@ mod tests {
 
             run_system_until_task_completed(&mut resources, &mut buff).await;
 
-            assert_matches!(buff.state, Buff::Volatile);
+            crate::assert_matches!(buff.state, Buff::Volatile);
             assert_eq!(buff.context.fail_count, 2);
         }
     }

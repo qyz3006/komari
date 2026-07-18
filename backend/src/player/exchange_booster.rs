@@ -360,7 +360,7 @@ mod tests {
         exchanging.state = State::OpenHexaMenu(Timeout::default());
 
         update_open_hexa_menu(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::OpenHexaMenu(_));
+        crate::assert_matches!(exchanging.state, State::OpenHexaMenu(_));
     }
 
     #[test]
@@ -380,7 +380,7 @@ mod tests {
         });
 
         update_open_hexa_menu(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::OpenExchangingMenu(_, _));
+        crate::assert_matches!(exchanging.state, State::OpenExchangingMenu(_, _));
     }
 
     #[test]
@@ -400,7 +400,7 @@ mod tests {
         });
 
         update_open_hexa_menu(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::Completing(_, false));
+        crate::assert_matches!(exchanging.state, State::Completing(_, false));
     }
 
     #[test]
@@ -416,7 +416,7 @@ mod tests {
         exchanging.state = State::OpenExchangingMenu(Timeout::default(), rect(10, 20));
 
         update_open_exchanging_menu(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::OpenExchangingMenu(_, _));
+        crate::assert_matches!(exchanging.state, State::OpenExchangingMenu(_, _));
     }
 
     #[test]
@@ -439,7 +439,7 @@ mod tests {
         );
 
         update_open_exchanging_menu(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::OpenBoosterMenu(_, _));
+        crate::assert_matches!(exchanging.state, State::OpenBoosterMenu(_, _));
     }
 
     #[test]
@@ -476,7 +476,7 @@ mod tests {
             expected_keys.len(),
             "All input keys should have been typed"
         );
-        assert_matches!(exchanging.state, State::Exchanging(_, _));
+        crate::assert_matches!(exchanging.state, State::Exchanging(_, _));
     }
 
     #[test]
@@ -492,7 +492,7 @@ mod tests {
         exchanging.state = State::Exchanging(Timeout::default(), rect(30, 10));
 
         update_exchanging(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::Exchanging(_, _));
+        crate::assert_matches!(exchanging.state, State::Exchanging(_, _));
     }
 
     #[test]
@@ -515,7 +515,7 @@ mod tests {
         );
 
         update_exchanging(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::Confirming(_, _));
+        crate::assert_matches!(exchanging.state, State::Confirming(_, _));
     }
 
     #[test]
@@ -531,7 +531,7 @@ mod tests {
         exchanging.state = State::Confirming(Timeout::default(), rect(10, 20));
 
         update_confirming(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::Confirming(_, _));
+        crate::assert_matches!(exchanging.state, State::Confirming(_, _));
     }
 
     #[test]
@@ -548,7 +548,7 @@ mod tests {
         );
 
         update_confirming(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::Completing(_, false));
+        crate::assert_matches!(exchanging.state, State::Completing(_, false));
     }
 
     #[test]
@@ -571,7 +571,7 @@ mod tests {
         );
 
         update_completing(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::Completing(_, true));
+        crate::assert_matches!(exchanging.state, State::Completing(_, true));
     }
 
     #[test]
@@ -591,6 +591,6 @@ mod tests {
         );
 
         update_completing(&mut resources, &mut exchanging);
-        assert_matches!(exchanging.state, State::Completing(_, false));
+        crate::assert_matches!(exchanging.state, State::Completing(_, false));
     }
 }

@@ -557,7 +557,7 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::DoubleJumping(_));
+        crate::assert_matches!(player.state, Player::DoubleJumping(_));
     }
 
     #[test]
@@ -568,7 +568,7 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Adjusting(_));
+        crate::assert_matches!(player.state, Player::Adjusting(_));
     }
 
     #[test]
@@ -582,7 +582,7 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Grappling(_));
+        crate::assert_matches!(player.state, Player::Grappling(_));
     }
 
     #[test]
@@ -593,7 +593,7 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -605,7 +605,7 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Jumping(_));
+        crate::assert_matches!(player.state, Player::Jumping(_));
     }
 
     #[test]
@@ -617,7 +617,7 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Falling(_));
+        crate::assert_matches!(player.state, Player::Falling(_));
     }
 
     #[test]
@@ -628,7 +628,7 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Idle);
+        crate::assert_matches!(player.state, Player::Idle);
     }
 
     #[test]
@@ -646,6 +646,6 @@ mod tests {
 
         update_moving_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Moving(Point { x: 100, y: 0 }, _, _));
+        crate::assert_matches!(player.state, Player::Moving(Point { x: 100, y: 0 }, _, _));
     }
 }

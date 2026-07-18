@@ -688,13 +688,13 @@ mod tests {
                 assert!(!idle.has_any_other_player());
                 assert!(idle.portals.is_empty());
 
-                assert_matches!(minimap.context.minimap_task, Some(_));
-                assert_matches!(minimap.context.rune_task, None);
-                assert_matches!(minimap.context.has_elite_boss_task, None);
-                assert_matches!(minimap.context.has_guildie_player_task, None);
-                assert_matches!(minimap.context.has_stranger_player_task, None);
-                assert_matches!(minimap.context.has_friend_player_task, None);
-                assert_matches!(minimap.context.portals_task, None);
+                crate::assert_matches!(minimap.context.minimap_task, Some(_));
+                crate::assert_matches!(minimap.context.rune_task, None);
+                crate::assert_matches!(minimap.context.has_elite_boss_task, None);
+                crate::assert_matches!(minimap.context.has_guildie_player_task, None);
+                crate::assert_matches!(minimap.context.has_stranger_player_task, None);
+                crate::assert_matches!(minimap.context.has_friend_player_task, None);
+                crate::assert_matches!(minimap.context.portals_task, None);
                 assert!(minimap.context.portals_invalidate_map.is_empty());
             }
             _ => panic!(),

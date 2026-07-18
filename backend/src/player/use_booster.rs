@@ -202,7 +202,7 @@ mod tests {
 
         update_using(&mut resources, &mut using, KeyKind::F1);
 
-        assert_matches!(using.state, State::Using(_));
+        crate::assert_matches!(using.state, State::Using(_));
     }
 
     #[test]
@@ -223,7 +223,7 @@ mod tests {
 
         update_using(&mut resources, &mut using, KeyKind::F1);
 
-        assert_matches!(using.state, State::Confirming(_));
+        crate::assert_matches!(using.state, State::Confirming(_));
     }
 
     #[test]
@@ -244,7 +244,7 @@ mod tests {
 
         update_using(&mut resources, &mut using, KeyKind::F1);
 
-        assert_matches!(
+        crate::assert_matches!(
             using.state,
             State::Completing {
                 failed: true,
@@ -264,7 +264,7 @@ mod tests {
         using.state = State::Confirming(Timeout::default());
 
         update_confirming(&mut resources, &mut using);
-        assert_matches!(using.state, State::Confirming(_));
+        crate::assert_matches!(using.state, State::Confirming(_));
     }
 
     #[test]
@@ -281,7 +281,7 @@ mod tests {
         });
 
         update_confirming(&mut resources, &mut using);
-        assert_matches!(using.state, State::Confirming(_));
+        crate::assert_matches!(using.state, State::Confirming(_));
     }
 
     #[test]
@@ -299,7 +299,7 @@ mod tests {
 
         update_confirming(&mut resources, &mut using);
 
-        assert_matches!(
+        crate::assert_matches!(
             using.state,
             State::Completing {
                 completed: false,
@@ -333,7 +333,7 @@ mod tests {
 
         update_completing(&mut resources, &mut using);
 
-        assert_matches!(
+        crate::assert_matches!(
             using.state,
             State::Completing {
                 completed: true,
@@ -360,7 +360,7 @@ mod tests {
         };
 
         update_completing(&mut resources, &mut using);
-        assert_matches!(
+        crate::assert_matches!(
             using.state,
             State::Completing {
                 completed: false,

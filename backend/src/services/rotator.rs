@@ -436,7 +436,7 @@ mod tests {
         service.update_from_map(Some(&map), Some("preset".to_string()));
         service.update_from_characters(Some(&character));
 
-        assert_matches!(
+        crate::assert_matches!(
             service.args.character_actions.as_slice(),
             [
                 Action::Key(ActionKey {
@@ -494,7 +494,7 @@ mod tests {
         let mut service = DefaultRotatorService::default();
         service.update_from_characters(Some(&character));
 
-        assert_matches!(
+        crate::assert_matches!(
             service.args.character_actions.as_slice(),
             [
                 Action::Key(ActionKey {

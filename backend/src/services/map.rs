@@ -176,7 +176,7 @@ mod tests {
 
         service.redetect(&mut minimap);
 
-        assert_matches!(minimap.state, Minimap::Detecting);
+        crate::assert_matches!(minimap.state, Minimap::Detecting);
     }
 
     #[test]

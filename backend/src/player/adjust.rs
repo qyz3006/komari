@@ -268,8 +268,8 @@ mod tests {
         update_adjusting_state(&mut resources, &mut player, Minimap::Detecting);
 
         // Should remain in Adjusting state (started branch moves it into Adjusting with moving started)
-        assert_matches!(player.state, Player::Adjusting(_));
-        assert_matches!(player.context.last_movement, Some(LastMovement::Adjusting));
+        crate::assert_matches!(player.state, Player::Adjusting(_));
+        crate::assert_matches!(player.context.last_movement, Some(LastMovement::Adjusting));
     }
 
     #[test]
@@ -290,7 +290,7 @@ mod tests {
 
         update_adjusting_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Adjusting(_));
+        crate::assert_matches!(player.state, Player::Adjusting(_));
         assert_eq!(
             player.context.last_known_direction,
             ActionKeyDirection::Right
@@ -314,7 +314,7 @@ mod tests {
 
         update_adjusting_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::Adjusting(_));
+        crate::assert_matches!(player.state, Player::Adjusting(_));
         assert_eq!(
             player.context.last_known_direction,
             ActionKeyDirection::Left
@@ -338,7 +338,7 @@ mod tests {
 
         update_adjusting_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Adjusting(Adjusting {
                 moving: Moving {
@@ -373,7 +373,7 @@ mod tests {
 
         update_adjusting_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Adjusting(Adjusting {
                 adjust_timeout: Timeout { started: true, .. },
@@ -406,7 +406,7 @@ mod tests {
 
         update_adjusting_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Adjusting(Adjusting {
                 moving: Moving {
@@ -433,7 +433,7 @@ mod tests {
 
         update_adjusting_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Adjusting(Adjusting {
                 moving: Moving {

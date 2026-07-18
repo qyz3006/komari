@@ -215,7 +215,7 @@ mod tests {
 
         update_grappling_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Grappling(Grappling {
                 moving: Moving {
@@ -241,7 +241,7 @@ mod tests {
         let mut resources = Resources::new(Some(keys), None);
 
         update_grappling_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Grappling(Grappling {
                 moving: Moving {
@@ -267,7 +267,7 @@ mod tests {
         player.state = Player::Grappling(grappling);
 
         update_grappling_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Grappling(Grappling {
                 did_y_changed: false,
@@ -277,7 +277,7 @@ mod tests {
 
         player.context.last_known_pos = Some(Point { x: 100, y: 150 });
         update_grappling_state(&mut resources, &mut player, Minimap::Detecting);
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Grappling(Grappling {
                 did_y_changed: true,

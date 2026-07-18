@@ -603,7 +603,7 @@ mod tests {
 
         update_free_slots(&mut resources, &mut swapping);
 
-        assert_matches!(swapping.state, State::FreeSlots(0, false));
+        crate::assert_matches!(swapping.state, State::FreeSlots(0, false));
     }
 
     #[test]
@@ -634,7 +634,7 @@ mod tests {
 
         update_free_slots(&mut resources, &mut swapping);
 
-        assert_matches!(swapping.state, State::FindCards(_));
+        crate::assert_matches!(swapping.state, State::FindCards(_));
     }
 
     #[test]
@@ -655,7 +655,7 @@ mod tests {
 
         update_free_slots(&mut resources, &mut swapping);
 
-        assert_matches!(swapping.state, State::FreeSlot(_, 1));
+        crate::assert_matches!(swapping.state, State::FreeSlot(_, 1));
     }
 
     #[test]
@@ -677,7 +677,7 @@ mod tests {
         update_free_slots(&mut resources, &mut swapping);
 
         // Completing because there is no free slot to swap
-        assert_matches!(swapping.state, State::Completing(_, _));
+        crate::assert_matches!(swapping.state, State::Completing(_, _));
     }
 
     #[test]
@@ -710,7 +710,7 @@ mod tests {
         update_free_slot(&mut resources, &mut swapping);
 
         // Should still be in FreeSlot (updated)
-        assert_matches!(swapping.state, State::FreeSlot(_, 0));
+        crate::assert_matches!(swapping.state, State::FreeSlot(_, 0));
     }
 
     #[test]
@@ -741,7 +741,7 @@ mod tests {
 
         // After setting the free flag the code resets timeout.current = FAMILIAR_FREE_SLOTS_TIMEOUT (10)
         assert!(swapping.slots[0].is_free);
-        assert_matches!(
+        crate::assert_matches!(
             swapping.state,
             State::FreeSlot(Timeout { current: 10, .. }, 0)
         );
@@ -774,7 +774,7 @@ mod tests {
         update_swapping(&mut resources, &mut swapping);
 
         // No explicit state assertion here — function should have processed the Level5 branch and remain swapping
-        assert_matches!(swapping.state, State::Swapping(_, 0));
+        crate::assert_matches!(swapping.state, State::Swapping(_, 0));
     }
 
     #[test]
@@ -803,7 +803,7 @@ mod tests {
 
         update_swapping(&mut resources, &mut swapping);
 
-        assert_matches!(swapping.state, State::Swapping(_, 0));
+        crate::assert_matches!(swapping.state, State::Swapping(_, 0));
     }
 
     #[test]
@@ -836,7 +836,7 @@ mod tests {
 
         update_swapping(&mut resources, &mut swapping);
 
-        assert_matches!(swapping.state, State::Swapping(_, 1));
+        crate::assert_matches!(swapping.state, State::Swapping(_, 1));
     }
 
     #[test]
@@ -868,7 +868,7 @@ mod tests {
 
         update_swapping(&mut resources, &mut swapping);
 
-        assert_matches!(swapping.state, State::Completing(_, false));
+        crate::assert_matches!(swapping.state, State::Completing(_, false));
     }
 
     #[test]
@@ -887,7 +887,7 @@ mod tests {
 
         update_saving(&mut resources, &mut swapping);
 
-        assert_matches!(swapping.state, State::Saving(_));
+        crate::assert_matches!(swapping.state, State::Saving(_));
     }
 
     // TODO: more tests

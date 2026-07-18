@@ -221,7 +221,7 @@ mod tests {
 
         run_system_until_task_completed(&mut resources, &mut skill).await;
 
-        assert_matches!(skill.state, Skill::Detecting);
+        crate::assert_matches!(skill.state, Skill::Detecting);
     }
 
     #[test]
@@ -235,6 +235,6 @@ mod tests {
 
         run_system(&mut resources, &mut skill, Player::Idle);
 
-        assert_matches!(skill.state, Skill::Detecting);
+        crate::assert_matches!(skill.state, Skill::Detecting);
     }
 }

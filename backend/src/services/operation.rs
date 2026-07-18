@@ -245,7 +245,7 @@ mod tests {
 
         let updated = update_operation(op, OperationUpdate::TemporaryHalt);
 
-        assert_matches!(updated.state, OperationState::Halting);
+        crate::assert_matches!(updated.state, OperationState::Halting);
     }
 
     #[test]
@@ -255,7 +255,7 @@ mod tests {
 
         let updated = update_operation(op, OperationUpdate::Halt);
 
-        assert_matches!(updated.state, OperationState::Halting);
+        crate::assert_matches!(updated.state, OperationState::Halting);
     }
 
     #[test]
@@ -282,7 +282,7 @@ mod tests {
 
         let updated = update_operation(op, OperationUpdate::Run);
 
-        assert_matches!(updated.state, OperationState::Running);
+        crate::assert_matches!(updated.state, OperationState::Running);
     }
 
     #[test]
@@ -300,7 +300,7 @@ mod tests {
 
         let updated = config_operation(op, new);
 
-        assert_matches!(updated.state, OperationState::Halting);
+        crate::assert_matches!(updated.state, OperationState::Halting);
     }
 
     #[test]
@@ -312,6 +312,6 @@ mod tests {
 
         let updated = config_operation(op, new);
 
-        assert_matches!(updated.state, OperationState::RunUntil { .. });
+        crate::assert_matches!(updated.state, OperationState::RunUntil { .. });
     }
 }

@@ -171,7 +171,7 @@ mod tests {
                 None => yield_now().await,
             }
         }
-        assert_matches!(task.poll_inner(), None);
+        crate::assert_matches!(task.poll_inner(), None);
         assert!(task.completed());
     }
 
@@ -180,7 +180,7 @@ mod tests {
         let mut task = None::<Task<Result<u32>>>;
         assert!(task.is_none());
 
-        assert_matches!(
+        crate::assert_matches!(
             update_task(1000, &mut task, || (), |_| Ok(0)),
             Update::Pending
         );
@@ -193,10 +193,10 @@ mod tests {
                 Update::Err(_) => unreachable!(),
             }
         }
-        assert_matches!(task.as_mut().unwrap().poll_inner(), None);
+        crate::assert_matches!(task.as_mut().unwrap().poll_inner(), None);
         assert!(task.as_ref().unwrap().completed());
 
-        assert_matches!(
+        crate::assert_matches!(
             update_task(1000, &mut task, || (), |_| Ok(0)),
             Update::Pending
         );

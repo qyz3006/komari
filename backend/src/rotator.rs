@@ -1413,7 +1413,7 @@ fn priority_action(
     condition: ActionCondition,
     queue_to_front: bool,
 ) -> PriorityAction {
-    debug_assert_matches!(
+    debug_crate::assert_matches!(
         condition,
         ActionCondition::EveryMillis(_) | ActionCondition::ErdaShowerOffCooldown
     );
@@ -2364,7 +2364,7 @@ mod tests {
             Rect::new(20, 20, 80, 80).into(),
         );
 
-        assert_matches!(
+        crate::assert_matches!(
             player.normal_action(),
             Some(PlayerAction::PingPong(PingPong {
                 direction: PingPongDirection::Left,
@@ -2382,7 +2382,7 @@ mod tests {
             Rect::new(20, 20, 80, 80).into(),
         );
 
-        assert_matches!(
+        crate::assert_matches!(
             player.normal_action(),
             Some(PlayerAction::PingPong(PingPong {
                 direction: PingPongDirection::Right,

@@ -1596,7 +1596,7 @@ mod tests {
             ..Default::default()
         };
 
-        assert_matches!(
+        crate::assert_matches!(
             state.auto_mob_pick_reachable_y_position(
                 &mut resources,
                 Minimap::Detecting,
@@ -1617,7 +1617,7 @@ mod tests {
         let mob_pos = Point::new(50, 125);
 
         // Expect 120 to be chosen since it's closest to 125
-        assert_matches!(
+        crate::assert_matches!(
             state.auto_mob_pick_reachable_y_position(&mut resources, Minimap::Detecting, mob_pos),
             Some(Point { x: 50, y: 120 })
         );
@@ -1634,7 +1634,7 @@ mod tests {
         let mob_pos = Point::new(50, 125);
 
         // No y value is chosen so the original y is used
-        assert_matches!(
+        crate::assert_matches!(
             state.auto_mob_pick_reachable_y_position(&mut resources, Minimap::Detecting, mob_pos),
             Some(Point { x: 50, y: 125 })
         );
@@ -1768,7 +1768,7 @@ mod tests {
 
         assert!(point.x >= 0 && point.x <= 20); // Platform xs
         assert_eq!(point.y, 80); // Platform y
-        assert_matches!(state.auto_mob_last_quadrant, Some(Quadrant::TopLeft));
+        crate::assert_matches!(state.auto_mob_last_quadrant, Some(Quadrant::TopLeft));
     }
 
     #[test]
@@ -1792,6 +1792,6 @@ mod tests {
 
         assert_eq!(point.x, 37);
         assert_eq!(point.y, 20); // 100 - 80
-        assert_matches!(state.auto_mob_last_quadrant, Some(Quadrant::BottomLeft));
+        crate::assert_matches!(state.auto_mob_last_quadrant, Some(Quadrant::BottomLeft));
     }
 }

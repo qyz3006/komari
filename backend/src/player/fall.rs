@@ -280,7 +280,7 @@ mod tests {
 
         update_falling_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Falling(Falling {
                 moving: Moving {
@@ -311,7 +311,7 @@ mod tests {
 
         update_falling_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Falling(Falling {
                 moving: Moving {
@@ -342,7 +342,7 @@ mod tests {
 
         update_falling_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Falling(Falling {
                 moving: Moving {
@@ -375,7 +375,7 @@ mod tests {
 
         update_falling_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::Falling(Falling {
                 moving: Moving {

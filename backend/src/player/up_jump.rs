@@ -482,7 +482,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -502,7 +502,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -523,7 +523,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -550,7 +550,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -568,7 +568,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(
+        crate::assert_matches!(
             player.state,
             Player::UpJumping(UpJumping {
                 moving: Moving {
@@ -599,7 +599,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -622,7 +622,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -643,7 +643,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -670,7 +670,7 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 
     #[test]
@@ -692,6 +692,6 @@ mod tests {
 
         update_up_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::UpJumping(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_));
     }
 }

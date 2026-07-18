@@ -470,7 +470,7 @@ mod tests {
 
         update_double_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::DoubleJumping(_));
+        crate::assert_matches!(player.state, Player::DoubleJumping(_));
         assert_eq!(
             player.context.last_movement,
             Some(LastMovement::DoubleJumping)
@@ -509,7 +509,7 @@ mod tests {
 
         update_double_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::DoubleJumping(_));
+        crate::assert_matches!(player.state, Player::DoubleJumping(_));
     }
 
     #[test]
@@ -530,7 +530,7 @@ mod tests {
 
         update_double_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::DoubleJumping(_));
+        crate::assert_matches!(player.state, Player::DoubleJumping(_));
     }
 
     #[test]
@@ -547,7 +547,7 @@ mod tests {
 
         update_double_jumping_state(&mut resources, &mut player, Minimap::Detecting);
 
-        assert_matches!(player.state, Player::DoubleJumping(DoubleJumping { moving, .. })
+        crate::assert_matches!(player.state, Player::DoubleJumping(DoubleJumping { moving, .. })
             if !moving.timeout.started);
     }
 
@@ -599,7 +599,7 @@ mod tests {
 
         update_from_ping_pong_action(&mut resources, &mut player, ping_pong, cur_pos, true);
 
-        assert_matches!(player.state, Player::Idle);
+        crate::assert_matches!(player.state, Player::Idle);
     }
 
     #[test]
@@ -631,7 +631,7 @@ mod tests {
         );
 
         // No state change expected
-        assert_matches!(player.state, Player::DoubleJumping(_));
+        crate::assert_matches!(player.state, Player::DoubleJumping(_));
     }
 
     #[test]
@@ -657,7 +657,7 @@ mod tests {
 
         update_from_ping_pong_action(&mut resources, &mut player, ping_pong, cur_pos, true);
 
-        assert_matches!(player.state, Player::UpJumping(_) | Player::Grappling(_));
+        crate::assert_matches!(player.state, Player::UpJumping(_) | Player::Grappling(_));
     }
 
     #[test]
@@ -684,6 +684,6 @@ mod tests {
 
         update_from_ping_pong_action(&mut resources, &mut player, ping_pong, cur_pos, true);
 
-        assert_matches!(player.state, Player::Falling { .. });
+        crate::assert_matches!(player.state, Player::Falling { .. });
     }
 }

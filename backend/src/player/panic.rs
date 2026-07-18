@@ -306,7 +306,7 @@ mod tests {
                 KeyKind::F1,
             );
 
-            assert_matches!(panicking.state, State::ChangingChannel(_, _));
+            crate::assert_matches!(panicking.state, State::ChangingChannel(_, _));
             assert_eq!(panicking.to_channel.unwrap().current_cycle_count, i);
         }
 
@@ -326,7 +326,7 @@ mod tests {
             KeyKind::F1,
         );
 
-        assert_matches!(panicking.state, State::ChangingChannel(_, _));
+        crate::assert_matches!(panicking.state, State::ChangingChannel(_, _));
         assert_eq!(
             panicking.to_channel.unwrap().current_cycle_count,
             cycle_count
@@ -364,7 +364,7 @@ mod tests {
                 KeyKind::F1,
             );
 
-            assert_matches!(panicking.state, State::ChangingChannel(_, _));
+            crate::assert_matches!(panicking.state, State::ChangingChannel(_, _));
             assert_eq!(panicking.to_channel.unwrap().current_cycle_count, i);
         }
 
@@ -384,7 +384,7 @@ mod tests {
             KeyKind::F1,
         );
 
-        assert_matches!(panicking.state, State::ChangingChannel(_, _));
+        crate::assert_matches!(panicking.state, State::ChangingChannel(_, _));
         assert_eq!(
             panicking.to_channel.unwrap().current_cycle_count,
             cycle_count
@@ -411,7 +411,7 @@ mod tests {
             KeyKind::F1,
         );
 
-        assert_matches!(panicking.state, State::Completing(_, false));
+        crate::assert_matches!(panicking.state, State::Completing(_, false));
     }
 
     #[test]
@@ -434,7 +434,7 @@ mod tests {
             KeyKind::F1,
         );
 
-        assert_matches!(panicking.state, State::Completing(_, false));
+        crate::assert_matches!(panicking.state, State::Completing(_, false));
     }
 
     #[test]
@@ -447,7 +447,7 @@ mod tests {
 
         update_going_to_town(&mut resources, &mut panicking, KeyKind::F2);
 
-        assert_matches!(panicking.state, State::GoingToTown(_, _));
+        crate::assert_matches!(panicking.state, State::GoingToTown(_, _));
     }
 
     #[test]
@@ -471,7 +471,7 @@ mod tests {
 
         update_going_to_town(&mut resources, &mut panicking, KeyKind::F2);
 
-        assert_matches!(panicking.state, State::Completing(_, true));
+        crate::assert_matches!(panicking.state, State::Completing(_, true));
     }
 
     #[test]
@@ -493,7 +493,7 @@ mod tests {
 
         update_going_to_town(&mut resources, &mut panicking, KeyKind::F2);
 
-        assert_matches!(
+        crate::assert_matches!(
             panicking.state,
             State::GoingToTown(
                 Timeout {
@@ -514,7 +514,7 @@ mod tests {
 
         update_completing(&mut resources, &mut panicking, Minimap::Detecting);
 
-        assert_matches!(panicking.state, State::Completing(_, true));
+        crate::assert_matches!(panicking.state, State::Completing(_, true));
     }
 
     #[test]
@@ -536,6 +536,6 @@ mod tests {
             Minimap::Idle(MinimapIdle::default()),
         );
 
-        assert_matches!(panicking.state, State::Completing(_, true));
+        crate::assert_matches!(panicking.state, State::Completing(_, true));
     }
 }
