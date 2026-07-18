@@ -591,7 +591,7 @@ fn anchor_at(
 
 #[cfg(test)]
 mod tests {
-    use std::{assert_matches::assert_matches, time::Duration};
+    use std::time::Duration;
 
     use mockall::predicate::eq;
     use opencv::{
@@ -601,6 +601,7 @@ mod tests {
     use tokio::time;
 
     use super::*;
+    use crate::assert_matches;
     use crate::detect::MockDetector;
 
     #[derive(Debug)]

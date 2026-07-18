@@ -434,12 +434,11 @@ fn get_mage_teleport_direction(
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use mockall::predicate::eq;
     use opencv::core::{Point, Rect};
 
     use super::{update_double_jumping_state, update_from_ping_pong_action};
+    use crate::assert_matches;
     use crate::{
         ActionKeyDirection,
         bridge::{KeyKind, MockInput},

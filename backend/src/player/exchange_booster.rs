@@ -315,13 +315,12 @@ fn bbox_click_point(bbox: Rect) -> (i32, i32) {
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use anyhow::anyhow;
     use mockall::{Sequence, predicate::eq};
     use opencv::core::Rect;
 
     use super::*;
+    use crate::assert_matches;
     use crate::{
         bridge::{KeyKind, MockInput, MouseKind},
         detect::MockDetector,

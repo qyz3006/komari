@@ -141,7 +141,6 @@ fn get_anchor(mat: &impl MatTraitConst, bbox: Rect) -> (Point, Vec4b) {
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
     use std::time::Duration;
 
     use anyhow::anyhow;
@@ -150,6 +149,7 @@ mod tests {
     use tokio::time::advance;
 
     use super::*;
+    use crate::assert_matches;
     use crate::detect::MockDetector;
     use crate::ecs::Resources;
 

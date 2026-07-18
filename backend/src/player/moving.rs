@@ -535,11 +535,10 @@ pub fn find_intermediate_points(
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use opencv::core::Point;
 
     use super::*;
+    use crate::assert_matches;
     use crate::ecs::Resources;
 
     fn setup_player(pos: Point, state: Player) -> PlayerEntity {

@@ -581,11 +581,10 @@ fn bbox_click_point(bbox: Rect) -> (i32, i32) {
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use mockall::predicate::{eq, function};
 
     use super::*;
+    use crate::assert_matches;
     use crate::{array::Array, bridge::MockInput, detect::MockDetector};
 
     #[test]

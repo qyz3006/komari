@@ -1,11 +1,10 @@
-use std::assert_matches;
-
 use super::{
     AutoMob, PingPongDirection, PlayerContext, Timeout,
     actions::{Key, PingPong, PlayerAction, update_from_ping_pong_action},
     double_jump::DoubleJumping,
     timeout::{Lifecycle, next_timeout_lifecycle},
 };
+use crate::assert_matches;
 use crate::{
     ActionKeyDirection, ActionKeyWith, Position, WaitAfterBuffered,
     bridge::{InputKeyDownOptions, KeyKind, LinkKeyKind},
@@ -692,12 +691,11 @@ fn random_wait_ticks(wait_base_ticks: u32, wait_random_range: u32) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use mockall::{Sequence, predicate::eq};
     use opencv::core::Point;
 
     use super::LinkKeyKind;
+    use crate::assert_matches;
     use crate::{
         ActionKeyDirection, ActionKeyWith, WaitAfterBuffered,
         bridge::{InputKeyDownOptions, KeyKind, MockInput},

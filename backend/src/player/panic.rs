@@ -264,13 +264,12 @@ fn update_completing(resources: &mut Resources, panicking: &mut Panicking, minim
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use anyhow::{Ok, anyhow};
     use mockall::predicate::eq;
     use opencv::core::Rect;
 
     use super::*;
+    use crate::assert_matches;
     use crate::{
         bridge::MockInput,
         detect::MockDetector,

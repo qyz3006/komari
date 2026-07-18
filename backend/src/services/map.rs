@@ -100,11 +100,10 @@ impl MapService for DefaultMapService {
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use opencv::core::Rect;
 
     use super::*;
+    use crate::assert_matches;
     use crate::{
         Platform as DatabasePlatform,
         minimap::{Minimap, MinimapIdle},

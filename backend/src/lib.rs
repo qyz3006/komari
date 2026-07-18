@@ -1,11 +1,36 @@
 #![allow(clippy::result_large_err)]
-#![allow(stable_features)]
-#![feature(assert_matches)]
 #![feature(box_into_inner)]
 #![feature(map_try_insert)]
 #![feature(variant_count)]
 #![feature(iter_array_chunks)]
 #![feature(stmt_expr_attributes)]
+
+// `std::assert_matches` is unavailable on the pinned nightly toolchain
+// (nightly-2026-07-16); provide an equivalent, behavior-preserving macro.
+#[macro_export]
+macro_rules! assert_matches {
+    ($expr:expr, $pat:pat $(if $guard:expr)? $(,)?) => {
+        match $expr {
+            $pat $(if $guard)? => {}
+            other => panic!(
+                "assertion failed: `(left matches right)` left: `{:?}`, right: `{}`",
+                other,
+                stringify!($pat)
+            ),
+        }
+    };
+    ($expr:expr, $pat:pat $(if $guard:expr)?, $($arg:tt)+) => {
+        match $expr {
+            $pat $(if $guard)? => {}
+            other => panic!(
+                "assertion failed: `(left matches right)` left: `{:?}`, right: `{}`: {}",
+                other,
+                stringify!($pat),
+                format_args!($($arg)+)
+            ),
+        }
+    };
+}
 
 use std::{
     sync::LazyLock,

@@ -445,11 +445,10 @@ fn up_jumping_kind(
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use opencv::core::Point;
 
     use super::*;
+    use crate::assert_matches;
     use crate::bridge::{KeyKind, MockInput};
     use crate::ecs::Resources;
     use crate::player::{Player, PlayerEntity};

@@ -206,12 +206,10 @@ impl EventHandler<OperationEvent> for OperationEventHandler {
 
 #[cfg(test)]
 mod tests {
-    use std::{
-        assert_matches::assert_matches,
-        time::{Duration, Instant},
-    };
+    use std::time::{Duration, Instant};
 
     use super::*;
+    use crate::assert_matches;
 
     fn base_config(run_timer: bool) -> OperationConfiguration {
         OperationConfiguration {

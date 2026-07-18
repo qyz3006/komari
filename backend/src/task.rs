@@ -155,11 +155,10 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches::assert_matches;
-
     use anyhow::Result;
     use tokio::task::yield_now;
 
+    use crate::assert_matches;
     use crate::task::{Task, Update, update_task};
 
     #[tokio::test(start_paused = true)]

@@ -1568,10 +1568,11 @@ fn auto_mob_ignore_xs_range_value(x: i32) -> (Range<i32>, u32) {
 
 #[cfg(test)]
 mod tests {
-    use std::{assert_matches::assert_matches, collections::HashMap};
+    use std::collections::HashMap;
 
     use opencv::core::{Point, Rect};
 
+    use crate::assert_matches;
     use crate::{
         Position,
         array::Array,
