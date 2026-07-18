@@ -172,8 +172,8 @@ fn MoveItem(action: ActionMove) -> Element {
 
     rsx! {
         div { class: "grid grid-cols-[140px_100px_auto] h-6 text-xs text-secondary-text group-hover:bg-secondary-surface {linked_action}",
-            div { class: "{ITEM_BORDER_CLASS} {ITEM_TEXT_CLASS}", {position.to_string()} }
-            div { class: {ITEM_TEXT_CLASS.to_string()}, {wait_secs.to_string()} }
+            div { class: "{ITEM_BORDER_CLASS} {ITEM_TEXT_CLASS}", {position} }
+            div { class: ITEM_TEXT_CLASS.to_string(), {wait_secs} }
             div {}
         }
     }
@@ -330,7 +330,7 @@ fn ItemIcons(
                     e.stop_propagation();
                     on_item_delete(index);
                 },
-                XIcon { class: {ICON_CLASS.to_string()} }
+                XIcon { class: ICON_CLASS.to_string() }
             }
         }
     }

@@ -240,7 +240,7 @@ fn PlatformItem(platform: Platform, on_item_click: Callback, on_item_delete: Cal
                 div { class: "{ITEM_BORDER_CLASS} {ITEM_TEXT_CLASS}",
                     {format!("X / {} - {}", platform.x_start, platform.x_end)}
                 }
-                div { class: {ITEM_TEXT_CLASS.to_string()}, {format!("Y / {}", platform.y)} }
+                div { class: ITEM_TEXT_CLASS.to_string(), {format!("Y / {}", platform.y)} }
             }
             div { class: "self-stretch invisible group-hover:visible group-hover:bg-secondary-surface flex items-center pr-1",
                 div {
@@ -249,7 +249,7 @@ fn PlatformItem(platform: Platform, on_item_click: Callback, on_item_delete: Cal
                         e.stop_propagation();
                         on_item_delete(());
                     },
-                    XIcon { class: {ICON_CLASS.to_string()} }
+                    XIcon { class: ICON_CLASS.to_string() }
                 }
             }
         }
