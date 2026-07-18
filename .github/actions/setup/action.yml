@@ -36,7 +36,7 @@ runs:
         ./bootstrap-vcpkg.bat -disableMetrics
         echo "set(VCPKG_BUILD_TYPE release)" >> triplets/x64-windows.cmake
         echo "set(VCPKG_BUILD_TYPE release)" >> triplets/x64-windows-static.cmake
-        ./vcpkg.exe install --clean-after-build --recurse opencv4[contrib,nonfree]:x64-windows-static
+        ./vcpkg.exe install --clean-after-build --recurse --overlay-ports="${{ env.VCPKG_ROOT }}/../vcpkg-overlay/ports" opencv4[contrib,nonfree]:x64-windows-static
 
     - if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       name: Save vcpkg cache
