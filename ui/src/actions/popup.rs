@@ -356,9 +356,9 @@ pub fn PopupActionsInputContent(
         backend::ActionCondition::Linked => tr("linked"),
     };
     let title = if modifying {
-        format!(tr("Modify a {name} action"), name = name)
+        format!("{} {}", tr("修改"), name)
     } else {
-        format!(tr("Add a new {name} action"), name = name)
+        format!("{} {}", tr("新增"), name)
     };
 
     rsx! {
