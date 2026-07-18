@@ -1,4 +1,5 @@
 #![allow(clippy::result_large_err)]
+#![feature(assert_matches)]
 #![feature(box_into_inner)]
 #![feature(map_try_insert)]
 #![feature(variant_count)]

@@ -722,6 +722,7 @@ mod tests {
     fn update_use_key_state_ensuring_use_with_stationary() {
         let mut resources = Resources::new(None, None);
         let mut player = make_player(UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -764,6 +765,7 @@ mod tests {
     fn update_use_key_state_ensuring_use_with_double_jump() {
         let mut resources = Resources::new(None, None);
         let mut player = make_player(UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -810,6 +812,7 @@ mod tests {
             .once();
         let mut resources = Resources::new(Some(keys), None);
         let mut use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -876,6 +879,7 @@ mod tests {
             .withf(|k| matches!(k, KeyKind::A));
         let mut resources = Resources::new(Some(keys), None);
         let use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -931,6 +935,7 @@ mod tests {
     fn update_use_key_state_waits_before() {
         let mut resources = Resources::new(None, None);
         let use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -969,6 +974,7 @@ mod tests {
             .once();
         let mut resources = Resources::new(Some(keys), None);
         let use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -1017,6 +1023,7 @@ mod tests {
             .in_sequence(&mut sequence);
         let mut resources = Resources::new(Some(keys), None);
         let mut use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -1107,6 +1114,7 @@ mod tests {
         let mut resources = Resources::new(Some(keys), None);
 
         let mut use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -1162,6 +1170,7 @@ mod tests {
         let mut resources = Resources::new(Some(keys), None);
 
         let mut use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -1222,6 +1231,7 @@ mod tests {
         let mut resources = Resources::new(Some(keys), None);
 
         let use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 0,
             key_hold_buffered_to_wait_after: false,
@@ -1268,6 +1278,7 @@ mod tests {
 
         let mut resources = Resources::new(Some(keys), None);
         let use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 3,
             key_hold_buffered_to_wait_after: false,
@@ -1307,6 +1318,7 @@ mod tests {
 
         let mut resources = Resources::new(Some(keys), None);
         let use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             key_hold_ticks: 2,
             key_hold_buffered_to_wait_after: true,
@@ -1385,6 +1397,7 @@ mod tests {
 
         let mut resources = Resources::new(Some(keys), None);
         let use_key = UseKey {
+            interruptible_by_priority: false,
             key: KeyKind::A,
             count: 2,
             current_count: 0,
