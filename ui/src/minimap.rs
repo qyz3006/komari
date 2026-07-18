@@ -663,7 +663,7 @@ fn Canvas(
             // never reconciled away — removing a sibling would wipe their drawn bitmaps.
             div {
                 class: "flex items-center justify-center text-sm rounded-2xl",
-                style: "{placeholder_style}",
+                style: {placeholder_style.to_string()},
                 {tr("No minimap detected")}
             }
             // Real-pixel-size content box; the two canvases stack via absolute positioning.
@@ -766,8 +766,8 @@ fn Info(state: ReadSignal<Option<MinimapState>>, map: ReadSignal<Option<Map>>) -
 #[component]
 fn InfoItem(name: String, value: String) -> Element {
     rsx! {
-        p { class: "text-sm text-primary-text font-mono", "{name}" }
-        p { class: "text-sm text-primary-text text-right font-mono", "{value}" }
+        p { class: "text-sm text-primary-text font-mono", {name.to_string()} }
+        p { class: "text-sm text-primary-text text-right font-mono", {value.to_string()} }
     }
 }
 

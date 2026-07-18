@@ -59,7 +59,7 @@ where
                 on_selected(value);
             },
             option {
-                class: "{OPTION_CLASS}",
+                class: {OPTION_CLASS.to_string()},
                 selected: options.iter().all(|state| !state.selected.cloned()),
                 disabled: true,
                 hidden: true,

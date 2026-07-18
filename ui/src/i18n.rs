@@ -13,7 +13,7 @@
 //! 此处接口（`tr`）保持不变。
 
 /// 翻译用户可见文本。传入英文原文作为 key，返回对应译文（默认简体中文）。
-pub fn tr<'a>(key: &'a str) -> &'a str {
+pub fn tr(key: &str) -> &str {
     match key {
         "(empty)" => "(empty)",
         "(no priority actions)" => "(无优先动作)",

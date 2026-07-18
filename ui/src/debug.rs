@@ -1,6 +1,6 @@
 use backend::{
     ActionView, BlockReason, CondOutcome, DebugState, PriorityActionView, QueueKind,
-    RotatorDebugEvent, RotatorSnapshot, TransparentShapeDifficulty, auto_record_lie_detector,
+    RotatorDebugEvent, TransparentShapeDifficulty, auto_record_lie_detector,
     auto_save_rune, debug_state_receiver, record_video, rotator_debug_event_receiver,
     set_rotator_debug_enabled, test_spin_rune, test_transparent_shape, test_violetta,
 };
@@ -132,6 +132,7 @@ struct RotatorDebugState {
 
 #[derive(Clone)]
 struct TimelineEntry {
+    #[allow(dead_code)]
     at_ms: u64,
     text: String,
     is_warn: bool,
@@ -374,7 +375,7 @@ pub fn RotatorDebugPanel() -> Element {
                                                 span { class: "text-yellow-400 mr-1", {tr("▶")} }
                                             }
                                             {av.id.map(|id| format!("#{id} ")).unwrap_or_default()}
-                                            {av.label.clone()}
+                                            {av.label}
                                         }
                                     }
                                 }
@@ -485,7 +486,7 @@ pub fn RotatorDebugPanel() -> Element {
 fn render_cooldown(remaining_ms: Option<i64>, condition_kind: &str) -> Element {
     let Some(remaining) = remaining_ms else {
         return rsx! {
-            span { class: "text-tertiary-text text-xs", "{condition_kind}" }
+            span { class: "text-tertiary-text text-xs", {condition_kind.to_string()} }
         };
     };
 
@@ -499,7 +500,7 @@ fn render_cooldown(remaining_ms: Option<i64>, condition_kind: &str) -> Element {
         20_000
     } else {
         return rsx! {
-            span { class: "text-tertiary-text text-xs", "{condition_kind}" }
+            span { class: "text-tertiary-text text-xs", {condition_kind.to_string()} }
         };
     };
 
