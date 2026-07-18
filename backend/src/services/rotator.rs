@@ -248,7 +248,6 @@ mod tests {
     use strum::IntoEnumIterator;
 
     use super::*;
-    use crate::assert_matches;
     use crate::{
         ActionConfiguration, ActionConfigurationCondition, Bound, EliteBossBehavior,
         FamiliarRarity, KeyBindingConfiguration, SwappableFamiliars,

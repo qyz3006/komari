@@ -438,7 +438,6 @@ mod tests {
     use opencv::core::{Point, Rect};
 
     use super::{update_double_jumping_state, update_from_ping_pong_action};
-    use crate::assert_matches;
     use crate::{
         ActionKeyDirection,
         bridge::{KeyKind, MockInput},

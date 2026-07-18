@@ -4,7 +4,6 @@ use super::{
     double_jump::DoubleJumping,
     timeout::{Lifecycle, next_timeout_lifecycle},
 };
-use crate::assert_matches;
 use crate::{
     ActionKeyDirection, ActionKeyWith, Position, WaitAfterBuffered,
     bridge::{InputKeyDownOptions, KeyKind, LinkKeyKind},
@@ -695,7 +694,6 @@ mod tests {
     use opencv::core::Point;
 
     use super::LinkKeyKind;
-    use crate::assert_matches;
     use crate::{
         ActionKeyDirection, ActionKeyWith, WaitAfterBuffered,
         bridge::{InputKeyDownOptions, KeyKind, MockInput},

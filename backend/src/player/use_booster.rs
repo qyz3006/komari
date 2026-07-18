@@ -180,7 +180,6 @@ mod tests {
     use mockall::predicate::eq;
 
     use super::*;
-    use crate::assert_matches;
     use crate::{
         bridge::{KeyKind, MockInput},
         detect::MockDetector,

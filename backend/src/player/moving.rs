@@ -538,7 +538,6 @@ mod tests {
     use opencv::core::Point;
 
     use super::*;
-    use crate::assert_matches;
     use crate::ecs::Resources;
 
     fn setup_player(pos: Point, state: Player) -> PlayerEntity {

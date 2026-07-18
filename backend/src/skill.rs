@@ -149,7 +149,6 @@ mod tests {
     use tokio::time::advance;
 
     use super::*;
-    use crate::assert_matches;
     use crate::detect::MockDetector;
     use crate::ecs::Resources;
 

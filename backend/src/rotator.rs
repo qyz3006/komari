@@ -1968,7 +1968,6 @@ mod tests {
     use tokio::{task::yield_now, time::timeout};
 
     use super::*;
-    use crate::assert_matches;
     use crate::{
         Position,
         buff::{BuffContext, BuffEntity, BuffKind},

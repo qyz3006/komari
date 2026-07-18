@@ -320,7 +320,6 @@ mod tests {
     use opencv::core::Rect;
 
     use super::*;
-    use crate::assert_matches;
     use crate::{
         bridge::{KeyKind, MockInput, MouseKind},
         detect::MockDetector,

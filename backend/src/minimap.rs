@@ -601,7 +601,6 @@ mod tests {
     use tokio::time;
 
     use super::*;
-    use crate::assert_matches;
     use crate::detect::MockDetector;
 
     #[derive(Debug)]

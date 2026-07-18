@@ -209,7 +209,6 @@ mod tests {
     use std::time::{Duration, Instant};
 
     use super::*;
-    use crate::assert_matches;
 
     fn base_config(run_timer: bool) -> OperationConfiguration {
         OperationConfiguration {

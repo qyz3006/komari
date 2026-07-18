@@ -584,7 +584,6 @@ mod tests {
     use mockall::predicate::{eq, function};
 
     use super::*;
-    use crate::assert_matches;
     use crate::{array::Array, bridge::MockInput, detect::MockDetector};
 
     #[test]

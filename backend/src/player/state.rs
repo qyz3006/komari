@@ -1572,7 +1572,6 @@ mod tests {
 
     use opencv::core::{Point, Rect};
 
-    use crate::assert_matches;
     use crate::{
         Position,
         array::Array,
