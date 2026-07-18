@@ -2,6 +2,7 @@ use backend::{Map, Platform, key_receiver};
 use dioxus::prelude::*;
 use tokio::sync::broadcast::error::RecvError;
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     actions::{
@@ -110,10 +111,10 @@ pub fn SectionPlatforms(disabled: bool) -> Element {
             on_open: move |open: bool| {
                 popup_open.set(open);
             },
-            Section { title: "Platforms",
+            Section { title: tr("Platforms"),
                 div { class: "grid grid-cols-2 gap-3",
                     ActionsCheckbox {
-                        label: "Rune pathing",
+                        label: tr("Rune pathing"),
                         disabled,
                         on_checked: move |rune_platforms_pathing| {
                             save_map(Map {
@@ -125,7 +126,7 @@ pub fn SectionPlatforms(disabled: bool) -> Element {
                     }
 
                     ActionsCheckbox {
-                        label: "Up jump only",
+                        label: tr("Up jump only"),
                         disabled: disabled || !map().rune_platforms_pathing,
                         on_checked: move |rune_platforms_pathing_up_jump_only| {
                             save_map(Map {
@@ -137,7 +138,7 @@ pub fn SectionPlatforms(disabled: bool) -> Element {
                     }
 
                     ActionsCheckbox {
-                        label: "Auto-mobbing pathing",
+                        label: tr("Auto-mobbing pathing"),
                         disabled,
                         on_checked: move |auto_mob_platforms_pathing| {
                             save_map(Map {
@@ -149,7 +150,7 @@ pub fn SectionPlatforms(disabled: bool) -> Element {
                     }
 
                     ActionsCheckbox {
-                        label: "Up jump only",
+                        label: tr("Up jump only"),
                         disabled: disabled || !map().auto_mob_platforms_pathing,
                         on_checked: move |auto_mob_platforms_pathing_up_jump_only| {
                             save_map(Map {
@@ -192,7 +193,7 @@ pub fn SectionPlatforms(disabled: bool) -> Element {
                         disabled,
                         class: "mt-2 w-full",
 
-                        "Add platform"
+                        {tr("Add platform")}
                     }
                 }
 

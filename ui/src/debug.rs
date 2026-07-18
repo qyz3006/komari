@@ -11,6 +11,7 @@ use crate::components::{
     button::{Button, ButtonStyle},
     section::Section,
 };
+use crate::i18n::tr;
 
 #[component]
 pub fn DebugScreen() -> Element {
@@ -32,7 +33,7 @@ pub fn DebugScreen() -> Element {
 
     rsx! {
         div { class: "flex flex-col h-full overflow-y-auto",
-            Section { title: "Debug",
+            Section { title: tr("Debug"),
                 div { class: "grid grid-cols-2 gap-3",
                     Button {
                         style: ButtonStyle::Secondary,
@@ -40,7 +41,7 @@ pub fn DebugScreen() -> Element {
                             test_spin_rune().await;
                         },
 
-                        "Test spin rune"
+                        {tr("Test spin rune")}
                     }
                     Button {
                         style: ButtonStyle::Secondary,
@@ -48,7 +49,7 @@ pub fn DebugScreen() -> Element {
                             test_violetta().await;
                         },
 
-                        "Test Violetta"
+                        {tr("Test Violetta")}
                     }
                     Button {
                         style: ButtonStyle::Secondary,
@@ -56,7 +57,7 @@ pub fn DebugScreen() -> Element {
                             test_transparent_shape(TransparentShapeDifficulty::Normal).await;
                         },
 
-                        "Test transparent shape normal"
+                        {tr("Test transparent shape normal")}
                     }
                     Button {
                         style: ButtonStyle::Secondary,
@@ -64,7 +65,7 @@ pub fn DebugScreen() -> Element {
                             test_transparent_shape(TransparentShapeDifficulty::Hard).await;
                         },
 
-                        "Test transparent shape hard"
+                        {tr("Test transparent shape hard")}
                     }
                     Button {
                         style: ButtonStyle::Secondary,
@@ -73,9 +74,9 @@ pub fn DebugScreen() -> Element {
                         },
 
                         if state().is_recording {
-                            "Stop recording"
+                            {tr("Stop recording")}
                         } else {
-                            "Start recording"
+                            {tr("Start recording")}
                         }
                     }
                     Button {
@@ -85,9 +86,9 @@ pub fn DebugScreen() -> Element {
                         },
 
                         if state().is_rune_auto_saving {
-                            "Stop auto saving rune"
+                            {tr("Stop auto saving rune")}
                         } else {
-                            "Start auto saving rune"
+                            {tr("Start auto saving rune")}
                         }
                     }
                     Button {
@@ -98,9 +99,9 @@ pub fn DebugScreen() -> Element {
                         },
 
                         if state().is_lie_detector_auto_recording {
-                            "Stop auto record lie detector"
+                            {tr("Stop auto record lie detector")}
                         } else {
-                            "Start auto record lie detector"
+                            {tr("Start auto record lie detector")}
                         }
                     }
                 }
@@ -135,7 +136,6 @@ struct TimelineEntry {
     text: String,
     is_warn: bool,
 }
-
 
 impl RotatorDebugState {
     fn apply_event(&mut self, ev: &RotatorDebugEvent) {
@@ -207,11 +207,7 @@ impl RotatorDebugState {
             }
             RotatorDebugEvent::Blocked { at, reason } => {
                 self.player_block_reason = reason.clone();
-                let text = format!(
-                    "{:.2}s  Blocked  {:?}",
-                    *at as f64 / 1000.0,
-                    reason
-                );
+                let text = format!("{:.2}s  Blocked  {:?}", *at as f64 / 1000.0, reason);
                 self.push_timeline(TimelineEntry {
                     at_ms: *at,
                     text,
@@ -310,7 +306,9 @@ pub fn RotatorDebugPanel() -> Element {
                                         d.priority_actions = snap.priority_actions.clone();
                                         d.player_block_reason = snap.player_block_reason.clone();
                                     }
-                                    RotatorDebugEvent::NormalAdvanced { index, backward, .. } => {
+                                    RotatorDebugEvent::NormalAdvanced {
+                                        index, backward, ..
+                                    } => {
                                         d.normal_index = *index;
                                         d.normal_backward = *backward;
                                     }
@@ -330,7 +328,7 @@ pub fn RotatorDebugPanel() -> Element {
     let paused = debug.read().paused;
 
     rsx! {
-        Section { title: "Rotator Debug",
+        Section { title: tr("Rotator Debug"),
             // Controls row
             div { class: "flex gap-2 mb-2",
                 Button {
@@ -345,35 +343,35 @@ pub fn RotatorDebugPanel() -> Element {
                             }
                         });
                     },
-                    if enabled { "Disable" } else { "Enable" }
+                    if enabled { {tr("Disable")} } else { {tr("Enable")} }
                 }
                 Button {
                     style: if paused { ButtonStyle::Primary } else { ButtonStyle::Secondary },
                     on_click: move |_| {
                         debug.with_mut(|d| d.paused = !d.paused);
                     },
-                    if paused { "Resume" } else { "Pause" }
+                    if paused { {tr("Resume")} } else { {tr("Pause")} }
                 }
             }
 
             if enabled {
                 // ① Queues
                 div { class: "mb-3",
-                    div { class: "text-xs text-primary-text font-medium mb-1", "① Queues" }
+                    div { class: "text-xs text-primary-text font-medium mb-1", {tr("① Queues")} }
                     div { class: "flex gap-3 flex-wrap",
                         // Priority queue
                         div { class: "flex-1 min-w-32",
-                            div { class: "text-xs text-secondary-text font-medium mb-1", "Priority" }
+                            div { class: "text-xs text-secondary-text font-medium mb-1", {tr("Priority")} }
                             div { class: "bg-secondary-surface p-2 min-h-8 text-xs font-mono",
                                 if debug.read().priority_queue.is_empty() {
-                                    span { class: "text-tertiary-text", "(empty)" }
+                                    span { class: "text-tertiary-text", {tr("(empty)")} }
                                 } else {
                                     for av in debug.read().priority_queue.clone() {
                                         div {
                                             key: "{av.label}",
                                             class: "truncate",
                                             if av.queue_to_front {
-                                                span { class: "text-yellow-400 mr-1", "▶" }
+                                                span { class: "text-yellow-400 mr-1", {tr("▶")} }
                                             }
                                             {av.id.map(|id| format!("#{id} ")).unwrap_or_default()}
                                             {av.label.clone()}
@@ -384,10 +382,10 @@ pub fn RotatorDebugPanel() -> Element {
                         }
                         // Side queue
                         div { class: "flex-1 min-w-24",
-                            div { class: "text-xs text-secondary-text font-medium mb-1", "Side" }
+                            div { class: "text-xs text-secondary-text font-medium mb-1", {tr("Side")} }
                             div { class: "bg-secondary-surface p-2 min-h-8 text-xs font-mono",
                                 if debug.read().side_queue_len == 0 {
-                                    span { class: "text-tertiary-text", "(empty)" }
+                                    span { class: "text-tertiary-text", {tr("(empty)")} }
                                 } else {
                                     span { "{debug.read().side_queue_len} pending" }
                                 }
@@ -415,7 +413,7 @@ pub fn RotatorDebugPanel() -> Element {
                                     }
                                 }
                                 if debug.read().normal_actions.is_empty() {
-                                    span { class: "text-tertiary-text", "(empty)" }
+                                    span { class: "text-tertiary-text", {tr("(empty)")} }
                                 }
                             }
                         }
@@ -424,10 +422,10 @@ pub fn RotatorDebugPanel() -> Element {
 
                 // ② Conditions & Cooldown
                 div { class: "mb-3",
-                    div { class: "text-xs text-primary-text font-medium mb-1", "② Conditions & Cooldown" }
+                    div { class: "text-xs text-primary-text font-medium mb-1", {tr("② Conditions & Cooldown")} }
                     div { class: "bg-secondary-surface p-2",
                         if debug.read().priority_actions.is_empty() {
-                            div { class: "text-xs text-tertiary-text", "(no priority actions)" }
+                            div { class: "text-xs text-tertiary-text", {tr("(no priority actions)")} }
                         } else {
                             for pav in debug.read().priority_actions.clone() {
                                 div {
@@ -442,7 +440,7 @@ pub fn RotatorDebugPanel() -> Element {
                                         } else {
                                             "text-tertiary-text w-16 text-center"
                                         },
-                                        if pav.ignoring { "ignoring:✓" } else { "ignoring:✗" }
+                                        if pav.ignoring { {tr("ignoring:✓")} } else { {tr("ignoring:✗")} }
                                     }
                                     // Cooldown bar + label
                                     {render_cooldown(pav.cooldown_remaining_ms, pav.action.condition_kind.as_str())}
@@ -454,7 +452,7 @@ pub fn RotatorDebugPanel() -> Element {
 
                 // ③ Timeline
                 div { class: "mb-3",
-                    div { class: "text-xs text-primary-text font-medium mb-1", "③ Timeline" }
+                    div { class: "text-xs text-primary-text font-medium mb-1", {tr("③ Timeline")} }
                     div {
                         class: "bg-secondary-surface p-2 h-40 overflow-y-auto font-mono text-xs",
                         id: "rotator-timeline",
@@ -474,7 +472,7 @@ pub fn RotatorDebugPanel() -> Element {
 
                 // ④ Player State
                 div {
-                    div { class: "text-xs text-primary-text font-medium mb-1", "④ Player State" }
+                    div { class: "text-xs text-primary-text font-medium mb-1", {tr("④ Player State")} }
                     div { class: "bg-secondary-surface p-2 text-xs font-mono",
                         "block: {debug.read().player_block_reason:?}"
                     }
@@ -511,8 +509,7 @@ fn render_cooldown(remaining_ms: Option<i64>, condition_kind: &str) -> Element {
         };
     }
 
-    let pct = ((total_ms - remaining) as f64 / total_ms as f64 * 100.0)
-        .clamp(0.0, 100.0) as u32;
+    let pct = ((total_ms - remaining) as f64 / total_ms as f64 * 100.0).clamp(0.0, 100.0) as u32;
     let secs = remaining as f64 / 1000.0;
 
     rsx! {

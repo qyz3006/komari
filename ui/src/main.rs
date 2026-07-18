@@ -25,6 +25,7 @@ use minimap::MinimapScreen;
 use rand::distr::{Alphanumeric, SampleString};
 use settings::SettingsScreen;
 
+use crate::i18n::tr;
 use crate::localization::LocalizationScreen;
 
 mod actions;
@@ -32,6 +33,7 @@ mod characters;
 mod components;
 #[cfg(debug_assertions)]
 mod debug;
+mod i18n;
 mod localization;
 mod minimap;
 mod settings;
@@ -201,7 +203,7 @@ fn Tab(name: String, selected: bool, on_click: EventHandler) -> Element {
             onclick: move |_| {
                 on_click(());
             },
-            p { class: "text-primary-text font-medium", {name} }
+            p { class: "text-primary-text font-medium", {tr(name.as_str())} }
         }
     }
 }

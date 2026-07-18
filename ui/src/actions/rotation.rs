@@ -1,6 +1,7 @@
 use backend::{Bound, Map, MobbingKey, RotationMode};
 use dioxus::prelude::*;
 
+use crate::i18n::tr;
 use crate::{
     actions::{
         ActionsCheckbox, ActionsContext, ActionsMillisInput, ActionsSelect,
@@ -91,10 +92,10 @@ pub fn SectionRotation(disabled: bool) -> Element {
             on_open: move |open: bool| {
                 popup_open.set(open);
             },
-            Section { title: "Rotation",
+            Section { title: tr("Rotation"),
                 div { class: "grid grid-cols-2 gap-3",
                     ActionsSelect::<RotationMode> {
-                        label: "Mode",
+                        label: tr("Mode"),
                         disabled,
                         on_selected: move |rotation_mode| {
                             save_map(Map {
@@ -114,7 +115,7 @@ pub fn SectionRotation(disabled: bool) -> Element {
                             disabled: disabled | update_mobbing_key_disabled(),
                             on_click: handle_mobbing_key_click,
 
-                            "Update mobbing key"
+                            {tr("Update mobbing key")}
                         }
                     }
 
@@ -125,13 +126,13 @@ pub fn SectionRotation(disabled: bool) -> Element {
                             disabled: disabled || update_mobbing_key_disabled(),
                             on_click: handle_mobbing_bound_click,
 
-                            "Update mobbing bound"
+                            {tr("Update mobbing bound")}
                         }
                     }
 
                     ActionsCheckbox {
-                        label: "Auto mobbing uses key when pathing",
-                        tooltip: "Pathing means when the player is moving from one quad to another.",
+                        label: tr("Auto mobbing uses key when pathing"),
+                        tooltip: tr("Pathing means when the player is moving from one quad to another."),
                         disabled,
                         on_checked: move |auto_mob_use_key_when_pathing| {
                             save_map(Map {
@@ -143,7 +144,7 @@ pub fn SectionRotation(disabled: bool) -> Element {
                     }
 
                     ActionsMillisInput {
-                        label: "Detect mobs when pathing every",
+                        label: tr("Detect mobs when pathing every"),
                         disabled,
                         on_value: move |auto_mob_use_key_when_pathing_update_millis| {
                             save_map(Map {
@@ -155,7 +156,7 @@ pub fn SectionRotation(disabled: bool) -> Element {
                     }
 
                     ActionsCheckbox {
-                        label: "Reset normal actions on Erda Shower resets",
+                        label: tr("Reset normal actions on Erda Shower resets"),
                         disabled,
                         on_checked: move |actions_any_reset_on_erda_condition| {
                             save_map(Map {

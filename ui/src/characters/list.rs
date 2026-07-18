@@ -4,6 +4,7 @@ use backend::{
 };
 use dioxus::prelude::*;
 
+use crate::i18n::tr;
 use crate::{
     characters::{
         CharactersCheckbox, CharactersKeyInput, CharactersMillisInput, CharactersNumberU32Input,
@@ -121,7 +122,7 @@ pub fn ActionConfigurationsList(
                         popup_content.set(PopupContent::Add(ActionConfiguration::default()));
                     },
                     disabled,
-                    "Add action"
+                    {tr("Add action")}
                 }
             }
 
@@ -268,9 +269,9 @@ fn Item(action: ActionConfiguration) -> Element {
     };
 
     let with = match with {
-        ActionKeyWith::Any => "Any",
-        ActionKeyWith::Stationary => "Stationary",
-        ActionKeyWith::DoubleJump => "Double jump",
+        ActionKeyWith::Any => tr("Any"),
+        ActionKeyWith::Stationary => tr("Stationary"),
+        ActionKeyWith::DoubleJump => tr("Double jump"),
     };
 
     rsx! {
@@ -291,9 +292,9 @@ fn PopupActionConfigurationContent(
     value: Option<ActionConfiguration>,
 ) -> Element {
     let section_text = if modifying {
-        "Modify a fixed action".to_string()
+        tr("Modify a fixed action").to_string()
     } else {
-        "Add a new fixed action".to_string()
+        tr("Add a new fixed action").to_string()
     };
 
     rsx! {
@@ -337,14 +338,14 @@ fn ActionConfigurationInput(
                         style: ButtonStyle::Primary,
                         on_click: on_copy,
                         class: "col-span-3",
-                        "Copy"
+                        {tr("Copy")}
                     }
                     div { class: "border-b border-primary-border" }
                 }
             }
             // Key, count and link key
             CharactersKeyInput {
-                label: "Key",
+                label: tr("Key"),
                 input_class: "border border-primary-border",
                 on_value: move |key: Option<KeyBinding>| {
                     let mut action = action.write();
@@ -354,7 +355,7 @@ fn ActionConfigurationInput(
             }
             div { class: "grid grid-cols-2 gap-3",
                 CharactersNumberU32Input {
-                    label: "Use count",
+                    label: tr("Use count"),
                     on_value: move |count| {
                         let mut action = action.write();
                         action.count = count;
@@ -362,7 +363,7 @@ fn ActionConfigurationInput(
                     value: action().count,
                 }
                 CharactersMillisInput {
-                    label: "Hold for",
+                    label: tr("Hold for"),
                     on_value: move |millis| {
                         let mut action = action.write();
                         action.key_hold_millis = millis;
@@ -371,8 +372,8 @@ fn ActionConfigurationInput(
                 }
             }
             CharactersCheckbox {
-                label: "Holding buffered",
-                tooltip: "Require [Wait after buffered] to be enabled and without [Link key]. When enabled, the holding time will be added to [Wait after] during the last key use. Useful for holding down key and moving simultaneously.",
+                label: tr("Holding buffered"),
+                tooltip: tr("Require [Wait after buffered] to be enabled and without [Link key]. When enabled, the holding time will be added to [Wait after] during the last key use. Useful for holding down key and moving simultaneously."),
                 tooltip_align: ContentAlign::End,
                 tooltip_side: ContentSide::Bottom,
                 on_checked: move |checked| {
@@ -383,7 +384,7 @@ fn ActionConfigurationInput(
             }
 
             CharactersKeyInput {
-                label: "Link key",
+                label: tr("Link key"),
                 input_class: "border border-primary-border",
                 disabled: matches!(action().link_key, LinkKeyBinding::None),
                 on_value: move |key: Option<KeyBinding>| {
@@ -393,7 +394,7 @@ fn ActionConfigurationInput(
                 value: action().link_key.key().unwrap_or_default(),
             }
             CharactersSelect::<LinkKeyBinding> {
-                label: "Link key type",
+                label: tr("Link key type"),
                 on_selected: move |link_key: LinkKeyBinding| {
                     let mut action = action.write();
                     action.link_key = link_key;
@@ -402,7 +403,7 @@ fn ActionConfigurationInput(
             }
             if can_create_linked_action {
                 CharactersCheckbox {
-                    label: "Linked action",
+                    label: tr("Linked action"),
                     checked: matches!(action().condition, ActionConfigurationCondition::Linked),
                     on_checked: move |is_linked: bool| {
                         let mut action = action.write();
@@ -419,7 +420,7 @@ fn ActionConfigurationInput(
 
             // Use with
             CharactersSelect::<ActionKeyWith> {
-                label: "Use with",
+                label: tr("Use with"),
                 on_selected: move |with| {
                     let mut action = action.write();
                     action.with = with;
@@ -427,7 +428,7 @@ fn ActionConfigurationInput(
                 selected: action().with,
             }
             CharactersMillisInput {
-                label: "Use every",
+                label: tr("Use every"),
                 disabled: millis().is_none(),
                 on_value: move |new_millis| {
                     if millis.peek().is_some() {
@@ -441,7 +442,7 @@ fn ActionConfigurationInput(
 
             // Wait before use
             CharactersMillisInput {
-                label: "Wait before use",
+                label: tr("Wait before use"),
                 on_value: move |millis| {
                     let mut action = action.write();
                     action.wait_before_millis = millis;
@@ -449,7 +450,7 @@ fn ActionConfigurationInput(
                 value: action().wait_before_millis,
             }
             CharactersMillisInput {
-                label: "Wait random range",
+                label: tr("Wait random range"),
                 on_value: move |millis| {
                     let mut action = action.write();
                     action.wait_before_millis_random_range = millis;
@@ -460,7 +461,7 @@ fn ActionConfigurationInput(
 
             // Wait after use
             CharactersMillisInput {
-                label: "Wait after use",
+                label: tr("Wait after use"),
                 on_value: move |millis| {
                     let mut action = action.write();
                     action.wait_after_millis = millis;
@@ -468,7 +469,7 @@ fn ActionConfigurationInput(
                 value: action().wait_after_millis,
             }
             CharactersMillisInput {
-                label: "Wait random range",
+                label: tr("Wait random range"),
                 on_value: move |millis| {
                     let mut action = action.write();
                     action.wait_after_millis_random_range = millis;
@@ -476,8 +477,8 @@ fn ActionConfigurationInput(
                 value: action().wait_after_millis_random_range,
             }
             CharactersSelect::<WaitAfterBuffered> {
-                label: "Wait after buffered",
-                tooltip: "After the last key use, instead of waiting inplace, the bot is allowed to execute the next action partially. This can be useful for movable skill with casting animation.",
+                label: tr("Wait after buffered"),
+                tooltip: tr("After the last key use, instead of waiting inplace, the bot is allowed to execute the next action partially. This can be useful for movable skill with casting animation."),
                 tooltip_align: ContentAlign::End,
                 on_selected: move |wait_after_buffered: WaitAfterBuffered| {
                     let mut action = action.write();
@@ -494,9 +495,9 @@ fn ActionConfigurationInput(
                     on_value(*action.peek());
                 },
                 if modifying {
-                    "Save"
+                    {tr("Save")}
                 } else {
-                    "Add"
+                    {tr("Add")}
                 }
             }
             Button {
@@ -505,7 +506,7 @@ fn ActionConfigurationInput(
                 on_click: move |_| {
                     on_cancel(());
                 },
-                "Cancel"
+                {tr("Cancel")}
             }
         }
     }

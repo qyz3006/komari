@@ -6,11 +6,12 @@ use backend::{
 };
 use dioxus::prelude::*;
 use futures_util::StreamExt;
-use tokio::sync::broadcast::error::RecvError;
 use inner::SectionActions;
 use platforms::SectionPlatforms;
 use rotation::SectionRotation;
+use tokio::sync::broadcast::error::RecvError;
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     components::{
@@ -230,7 +231,7 @@ pub fn ActionsScreen() -> Element {
 
                 Select::<usize> {
                     class: "w-full",
-                    placeholder: "Create an actions preset for the selected map...",
+                    placeholder: tr("Create an actions preset for the selected map..."),
                     disabled: map_presets().is_empty(),
                     on_selected: select_preset,
 
@@ -250,21 +251,21 @@ pub fn ActionsScreen() -> Element {
 #[component]
 fn SectionLegends() -> Element {
     rsx! {
-        Section { title: "Action legends", class: "text-xs text-primary-text",
-            p { "⟳ - Repeat" }
-            p { "⏱︎  - Wait" }
-            p { "ㄨ - No position" }
-            p { "⇈ - Queue to front" }
-            p { "⇆ - Any direction" }
-            p { "← - Left direction" }
-            p { "→ - Right direction" }
-            p { "⁺ - Buffered wait after" }
-            p { "A ⤓ - Key A is held down" }
-            p { "A ~ B - Random range between A and B" }
-            p { "A ↝ B - Use A key then B key" }
-            p { "A ↜ B - Use B key then A key" }
-            p { "A ↭ B - Use A and B keys at the same time" }
-            p { "A ↷ B - Use A key then B key while A is held down" }
+        Section { title: tr("Action legends"), class: "text-xs text-primary-text",
+            p { {tr("⟳ - Repeat")} }
+            p { {tr("⏱︎  - Wait")} }
+            p { {tr("ㄨ - No position")} }
+            p { {tr("⇈ - Queue to front")} }
+            p { {tr("⇆ - Any direction")} }
+            p { {tr("← - Left direction")} }
+            p { {tr("→ - Right direction")} }
+            p { {tr("⁺ - Buffered wait after")} }
+            p { {tr("A ⤓ - Key A is held down")} }
+            p { {tr("A ~ B - Random range between A and B")} }
+            p { {tr("A ↝ B - Use A key then B key")} }
+            p { {tr("A ↜ B - Use B key then A key")} }
+            p { {tr("A ↭ B - Use A and B keys at the same time")} }
+            p { {tr("A ↷ B - Use A key then B key while A is held down")} }
         }
     }
 }

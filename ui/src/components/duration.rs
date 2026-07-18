@@ -4,6 +4,7 @@ use dioxus::prelude::*;
 use tw_merge::tw_merge;
 
 use crate::components::{use_controlled, use_unique_id};
+use crate::i18n::tr;
 
 const CLASS: &str = "h-6 text-xs text-primary-text outline-none px-1 border border-primary-border disabled:text-tertiary-text disabled:cursor-not-allowed w-full";
 
@@ -128,8 +129,8 @@ pub fn DurationInput(props: DurationInputProps) -> Element {
             oninput: on_input,
             onblur: on_blur,
             placeholder: match components {
-                DurationParts::Full => "hh:mm:ss",
-                DurationParts::MinutesAndSeconds => "mm:ss",
+                DurationParts::Full => tr("hh:mm:ss"),
+                DurationParts::MinutesAndSeconds => tr("mm:ss"),
             },
         }
     }

@@ -1,6 +1,7 @@
 use backend::ActionConfigurationCondition;
 use dioxus::prelude::*;
 
+use crate::i18n::tr;
 use crate::{
     characters::{
         CharactersContext,
@@ -70,7 +71,7 @@ pub fn SectionFixedActions() -> Element {
     };
 
     rsx! {
-        Section { title: "Fixed actions",
+        Section { title: tr("Fixed actions"),
             ActionConfigurationsList {
                 disabled: character().id.is_none(),
                 on_item_add: add_action,

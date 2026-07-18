@@ -8,6 +8,7 @@ use backend::{
 use dioxus::{html::FileData, prelude::*};
 use futures_util::StreamExt;
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     characters::{actions::SectionFixedActions, bindings::SectionKeyBindings, buffs::SectionBuffs},
@@ -174,7 +175,7 @@ pub fn CharactersScreen() -> Element {
 
                 Select::<usize> {
                     class: "w-full",
-                    placeholder: "Create a character...",
+                    placeholder: tr("Create a character..."),
                     disabled: character_names().is_empty(),
                     on_selected: move |index| {
                         select_character(index);
@@ -196,7 +197,7 @@ pub fn CharactersScreen() -> Element {
 #[component]
 fn SectionUsePotionAndFeedPet() -> Element {
     rsx! {
-        Section { title: "Use potion and feed pet",
+        Section { title: tr("Use potion and feed pet"),
             div { class: "flex flex-col gap-4",
                 UsePotion {}
                 FeedPet {}
@@ -214,7 +215,7 @@ fn FeedPet() -> Element {
     rsx! {
         div { class: "grid grid-cols-4 gap-4",
             CharactersKeyBindingConfigurationInput {
-                label: "Feed key",
+                label: tr("Feed key"),
                 disabled: character().id.is_none(),
                 on_value: move |key_config: Option<KeyBindingConfiguration>| {
                     save_character(Character {
@@ -225,7 +226,7 @@ fn FeedPet() -> Element {
                 value: character().feed_pet_key,
             }
             CharactersNumberU32Input {
-                label: "Count",
+                label: tr("Count"),
                 disabled: character().id.is_none(),
                 on_value: move |feed_pet_count| {
                     save_character(Character {
@@ -236,7 +237,7 @@ fn FeedPet() -> Element {
                 value: character().feed_pet_count,
             }
             CharactersDurationInput {
-                label: "Every (mm:ss)",
+                label: tr("Every (mm:ss)"),
                 disabled: character().id.is_none(),
                 on_value: move |feed_pet_millis| {
                     save_character(Character {
@@ -247,7 +248,7 @@ fn FeedPet() -> Element {
                 value: character().feed_pet_millis,
             }
             CharactersCheckbox {
-                label: "Enabled",
+                label: tr("Enabled"),
                 disabled: character().id.is_none(),
                 on_checked: move |enabled| {
                     let character = character.peek().clone();
@@ -274,7 +275,7 @@ fn UsePotion() -> Element {
     rsx! {
         div { class: "grid grid-cols-4 gap-4",
             CharactersKeyBindingConfigurationInput {
-                label: "Potion key",
+                label: tr("Potion key"),
                 disabled: character().id.is_none(),
                 on_value: move |key_config: Option<KeyBindingConfiguration>| {
                     save_character(Character {
@@ -285,7 +286,7 @@ fn UsePotion() -> Element {
                 value: character().potion_key,
             }
             CharactersSelect::<PotionMode> {
-                label: "Mode",
+                label: tr("Mode"),
                 disabled: character().id.is_none(),
                 on_selected: move |potion_mode| {
                     save_character(Character {
@@ -298,7 +299,7 @@ fn UsePotion() -> Element {
             match character().potion_mode {
                 PotionMode::EveryMillis(millis) => rsx! {
                     CharactersDurationInput {
-                        label: "Every (mm:ss)",
+                        label: tr("Every (mm:ss)"),
                         disabled: character().id.is_none(),
                         on_value: move |millis| {
                             save_character(Character {
@@ -312,7 +313,7 @@ fn UsePotion() -> Element {
                 PotionMode::Percentage(percent) => rsx! {
                     div { class: "grid grid-cols-2 gap-2",
                         CharactersPercentageInput {
-                            label: "HP below",
+                            label: tr("HP below"),
                             disabled: character().id.is_none(),
                             on_value: move |percent| {
                                 save_character(Character {
@@ -323,7 +324,7 @@ fn UsePotion() -> Element {
                             value: percent as u32,
                         }
                         CharactersMillisInput {
-                            label: "HP update every",
+                            label: tr("HP update every"),
                             disabled: character().id.is_none(),
                             on_value: move |millis| {
                                 save_character(Character {
@@ -337,7 +338,7 @@ fn UsePotion() -> Element {
                 },
             }
             CharactersCheckbox {
-                label: "Enabled",
+                label: tr("Enabled"),
                 disabled: character().id.is_none(),
                 on_checked: move |enabled| {
                     let character = character.peek().clone();
@@ -362,10 +363,10 @@ fn SectionUseBooster() -> Element {
     let save_character = context.save_character;
 
     rsx! {
-        Section { title: "Use booster",
+        Section { title: tr("Use booster"),
             div { class: "grid grid-cols-3 gap-4",
                 CharactersKeyBindingConfigurationInput {
-                    label: "Generic Booster key",
+                    label: tr("Generic Booster key"),
                     value: character().generic_booster_key,
                     on_value: move |key_config: Option<KeyBindingConfiguration>| {
                         save_character(Character {
@@ -377,7 +378,7 @@ fn SectionUseBooster() -> Element {
                     label_class: "col-span-2",
                 }
                 CharactersCheckbox {
-                    label: "Enabled",
+                    label: tr("Enabled"),
                     checked: character().generic_booster_key.enabled,
                     on_checked: move |enabled| {
                         let character = character.peek().clone();
@@ -392,7 +393,7 @@ fn SectionUseBooster() -> Element {
                     disabled: character().id.is_none(),
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "HEXA Booster key",
+                    label: tr("HEXA Booster key"),
                     value: character().hexa_booster_key,
                     on_value: move |key_config: Option<KeyBindingConfiguration>| {
                         save_character(Character {
@@ -404,7 +405,7 @@ fn SectionUseBooster() -> Element {
                     label_class: "col-span-2",
                 }
                 CharactersCheckbox {
-                    label: "Enabled",
+                    label: tr("Enabled"),
                     checked: character().hexa_booster_key.enabled,
                     on_checked: move |enabled| {
                         let character = character.peek().clone();
@@ -419,8 +420,8 @@ fn SectionUseBooster() -> Element {
                     disabled: character().id.is_none(),
                 }
                 CharactersSelect::<ExchangeHexaBoosterCondition> {
-                    label: "Exchange when Sol Erda",
-                    tooltip: "Requires HEXA Booster to be visible in quick slots, Sol Erda tracker menu opened and HEXA Matrix configured in the quick menu. Exchange will only happen if there is no HEXA Booster.",
+                    label: tr("Exchange when Sol Erda"),
+                    tooltip: tr("Requires HEXA Booster to be visible in quick slots, Sol Erda tracker menu opened and HEXA Matrix configured in the quick menu. Exchange will only happen if there is no HEXA Booster."),
                     selected: character().hexa_booster_exchange_condition,
                     on_selected: move |hexa_booster_exchange_condition| {
                         save_character(Character {
@@ -431,7 +432,7 @@ fn SectionUseBooster() -> Element {
                     disabled: character().id.is_none(),
                 }
                 CharactersNumberU32Input {
-                    label: "Amount",
+                    label: tr("Amount"),
                     max_value: 20,
                     value: character().hexa_booster_exchange_amount,
                     on_value: move |hexa_booster_exchange_amount| {
@@ -443,7 +444,7 @@ fn SectionUseBooster() -> Element {
                     disabled: character().id.is_none() || character().hexa_booster_exchange_all,
                 }
                 CharactersCheckbox {
-                    label: "Exchange all",
+                    label: tr("Exchange all"),
                     checked: character().hexa_booster_exchange_all,
                     on_checked: move |hexa_booster_exchange_all| {
                         save_character(Character {
@@ -466,10 +467,10 @@ fn SectionMovement() -> Element {
     let disabled = use_memo(move || character().id.is_none());
 
     rsx! {
-        Section { title: "Movement",
+        Section { title: tr("Movement"),
             div { class: "grid grid-cols-3 gap-4",
                 CharactersCheckbox {
-                    label: "Up jump is flight",
+                    label: tr("Up jump is flight"),
                     on_checked: move |up_jump_is_flight| {
                         save_character(Character {
                             up_jump_is_flight,
@@ -477,11 +478,11 @@ fn SectionMovement() -> Element {
                         });
                     },
                     checked: character().up_jump_is_flight,
-                    tooltip: "Applicable only to mage class or when non-up-arrow up jump key is set.",
+                    tooltip: tr("Applicable only to mage class or when non-up-arrow up jump key is set."),
                     disabled,
                 }
                 CharactersCheckbox {
-                    label: "Jump then up jump if possible",
+                    label: tr("Jump then up jump if possible"),
                     on_checked: move |up_jump_specific_key_should_jump| {
                         save_character(Character {
                             up_jump_specific_key_should_jump,
@@ -489,11 +490,11 @@ fn SectionMovement() -> Element {
                         });
                     },
                     checked: character().up_jump_specific_key_should_jump,
-                    tooltip: "Applicable only for non-mage class and when non-up-arrow up jump key is set.",
+                    tooltip: tr("Applicable only for non-mage class and when non-up-arrow up jump key is set."),
                     disabled,
                 }
                 CharactersCheckbox {
-                    label: "Has extended teleport range",
+                    label: tr("Has extended teleport range"),
                     on_checked: move |has_extended_teleport_range| {
                         save_character(Character {
                             has_extended_teleport_range,
@@ -501,11 +502,11 @@ fn SectionMovement() -> Element {
                         });
                     },
                     checked: character().has_extended_teleport_range,
-                    tooltip: "Applicable only for mage class when teleport range increase buff is turned on.",
+                    tooltip: tr("Applicable only for mage class when teleport range increase buff is turned on."),
                     disabled,
                 }
                 CharactersCheckbox {
-                    label: "Disable teleport on fall",
+                    label: tr("Disable teleport on fall"),
                     on_checked: move |disable_teleport_on_fall| {
                         save_character(Character {
                             disable_teleport_on_fall,
@@ -513,11 +514,11 @@ fn SectionMovement() -> Element {
                         });
                     },
                     checked: character().disable_teleport_on_fall,
-                    tooltip: "Applicable only to mage class.",
+                    tooltip: tr("Applicable only to mage class."),
                     disabled,
                 }
                 CharactersCheckbox {
-                    label: "Disable double jumping",
+                    label: tr("Disable double jumping"),
                     on_checked: move |disable_double_jumping| {
                         save_character(Character {
                             disable_double_jumping,
@@ -525,11 +526,11 @@ fn SectionMovement() -> Element {
                         });
                     },
                     checked: character().disable_double_jumping,
-                    tooltip: "Not applicable if an action requires double jumping.",
+                    tooltip: tr("Not applicable if an action requires double jumping."),
                     disabled,
                 }
                 CharactersCheckbox {
-                    label: "Disable grapple on double jumping",
+                    label: tr("Disable grapple on double jumping"),
                     checked: character().disable_grapple_on_double_jumping,
                     on_checked: move |disable_grapple_on_double_jumping| {
                         save_character(Character {
@@ -537,11 +538,11 @@ fn SectionMovement() -> Element {
                             ..character.peek().clone()
                         });
                     },
-                    tooltip: "Applicable only if grapple key is set.",
+                    tooltip: tr("Applicable only if grapple key is set."),
                     disabled,
                 }
                 CharactersCheckbox {
-                    label: "Disable walking",
+                    label: tr("Disable walking"),
                     checked: character().disable_adjusting,
                     on_checked: move |disable_adjusting| {
                         save_character(Character {
@@ -549,14 +550,14 @@ fn SectionMovement() -> Element {
                             ..character.peek().clone()
                         });
                     },
-                    tooltip: "Not applicable if an action requires adjusting.",
+                    tooltip: tr("Not applicable if an action requires adjusting."),
                     disabled,
                 }
                 CharactersNumberU32Input {
-                    label: "Move tolerance",
+                    label: tr("Move tolerance"),
                     value: character().move_tolerance,
                     max_value: 50,
-                    tooltip: "Pixel radius for considering a move as arrived. Values above 25 for normal classes or 12 for mages may cause movement issues, as the character may double jump within the tolerance instead of moving along the Y axis.",
+                    tooltip: tr("Pixel radius for considering a move as arrived. Values above 25 for normal classes or 12 for mages may cause movement issues, as the character may double jump within the tolerance instead of moving along the Y axis."),
                     on_value: move |move_tolerance| {
                         save_character(Character {
                             move_tolerance,
@@ -578,10 +579,10 @@ fn SectionFamiliars() -> Element {
     let familiars = use_memo(move || character().familiars);
 
     rsx! {
-        Section { title: "Familiars",
+        Section { title: tr("Familiars"),
             div { class: "grid grid-cols-3 gap-4",
                 CharactersSelect::<SwappableFamiliars> {
-                    label: "Swappable slots",
+                    label: tr("Swappable slots"),
                     disabled: !familiars().enable_familiars_swapping,
                     on_selected: move |swappable_familiars| async move {
                         save_character(Character {
@@ -595,7 +596,7 @@ fn SectionFamiliars() -> Element {
                     selected: familiars().swappable_familiars,
                 }
                 CharactersDurationInput {
-                    label: "Swap check every (mm:ss)",
+                    label: tr("Swap check every (mm:ss)"),
                     disabled: !familiars().enable_familiars_swapping,
                     on_value: move |swap_check_millis| {
                         save_character(Character {
@@ -610,7 +611,7 @@ fn SectionFamiliars() -> Element {
                 }
 
                 CharactersCheckbox {
-                    label: "Swapping enabled",
+                    label: tr("Swapping enabled"),
                     on_checked: move |enable_familiars_swapping| {
                         save_character(Character {
                             familiars: Familiars {
@@ -624,7 +625,7 @@ fn SectionFamiliars() -> Element {
                 }
 
                 CharactersCheckbox {
-                    label: "Can swap rare familiars",
+                    label: tr("Can swap rare familiars"),
                     disabled: !familiars().enable_familiars_swapping,
                     on_checked: move |allowed| {
                         let mut rarities = familiars.peek().swappable_rarities.clone();
@@ -644,7 +645,7 @@ fn SectionFamiliars() -> Element {
                     checked: familiars().swappable_rarities.contains(&FamiliarRarity::Rare),
                 }
                 CharactersCheckbox {
-                    label: "Can swap epic familiars",
+                    label: tr("Can swap epic familiars"),
                     disabled: !familiars().enable_familiars_swapping,
                     on_checked: move |allowed| {
                         let mut rarities = familiars.peek().swappable_rarities.clone();
@@ -691,10 +692,10 @@ fn SectionOthers() -> Element {
     let disabled = use_memo(move || character().id.is_none());
 
     rsx! {
-        Section { title: "Others",
+        Section { title: tr("Others"),
             div { class: "grid grid-cols-[auto_auto_128px] gap-4",
                 CharactersMillisInput {
-                    label: "Link key timing",
+                    label: tr("Link key timing"),
                     disabled: disabled(),
                     on_value: move |link_key_timing_millis| {
                         save_character(Character {
@@ -707,7 +708,7 @@ fn SectionOthers() -> Element {
                 div {}
                 div {}
                 CharactersSelect::<EliteBossBehavior> {
-                    label: "Elite boss spawns behavior",
+                    label: tr("Elite boss spawns behavior"),
                     disabled,
                     on_selected: move |elite_boss_behavior| {
                         save_character(Character {
@@ -718,7 +719,7 @@ fn SectionOthers() -> Element {
                     selected: character().elite_boss_behavior,
                 }
                 CharactersKeyInput {
-                    label: "Key to use",
+                    label: tr("Key to use"),
                     disabled,
                     on_value: move |key: Option<KeyBinding>| {
                         save_character(Character {
@@ -735,14 +736,14 @@ fn SectionOthers() -> Element {
                             import_character(file).await;
                         },
                         class: "flex-grow",
-                        Button { class: "w-full", "Import" }
+                        Button { class: "w-full", {tr("Import")} }
                     }
                     FileOutput {
                         class: "flex-grow",
                         on_file: export_content,
                         download: export_name(),
                         disabled,
-                        Button { class: "w-full", disabled, "Export" }
+                        Button { class: "w-full", disabled, {tr("Export")} }
                     }
                 }
             }

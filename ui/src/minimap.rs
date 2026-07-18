@@ -13,6 +13,7 @@ use futures_util::StreamExt;
 use serde::Serialize;
 use tokio::{sync::broadcast::error::RecvError, time::sleep};
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     components::{
@@ -462,7 +463,7 @@ pub fn MinimapScreen() -> Element {
                             delete_disabled: map_names().is_empty(),
                             Select::<usize> {
                                 class: "w-full",
-                                placeholder: "Create a map...",
+                                placeholder: tr("Create a map..."),
                                 disabled: map_names().is_empty(),
                                 on_selected: move |index| {
                                     let selected: Map = maps
@@ -622,9 +623,17 @@ fn Canvas(
             if *minimap_size.peek() != Some((width, height)) {
                 minimap_size.set(Some((width, height)));
             }
-            let Err(error) =
-                canvas.send((frame, width, height, destinations, bound, quadrant, portals, rune, player_position))
-            else {
+            let Err(error) = canvas.send((
+                frame,
+                width,
+                height,
+                destinations,
+                bound,
+                quadrant,
+                portals,
+                rune,
+                player_position,
+            )) else {
                 continue;
             };
             if matches!(error, EvalError::Finished) {
@@ -655,7 +664,7 @@ fn Canvas(
             div {
                 class: "flex items-center justify-center text-sm rounded-2xl",
                 style: "{placeholder_style}",
-                "No minimap detected"
+                {tr("No minimap detected")}
             }
             // Real-pixel-size content box; the two canvases stack via absolute positioning.
             div {
@@ -691,16 +700,16 @@ fn Info(state: ReadSignal<Option<MinimapState>>, map: ReadSignal<Option<Map>>) -
 
     let info = use_memo(move || {
         let mut info = GameStateInfo {
-            position: "Unknown".to_string(),
-            health: "Unknown".to_string(),
-            state: "Unknown".to_string(),
-            normal_action: "None".to_string(),
-            priority_action: "None".to_string(),
-            erda_shower_state: "Unknown".to_string(),
-            input_state: "Unknown".to_string(),
-            detected_map_size: "Unknown".to_string(),
-            selected_map_size: "Unknown".to_string(),
-            run_timer_duration: "None".to_string(),
+            position: tr("Unknown").to_string(),
+            health: tr("Unknown").to_string(),
+            state: tr("Unknown").to_string(),
+            normal_action: tr("None").to_string(),
+            priority_action: tr("None").to_string(),
+            erda_shower_state: tr("Unknown").to_string(),
+            input_state: tr("Unknown").to_string(),
+            detected_map_size: tr("Unknown").to_string(),
+            selected_map_size: tr("Unknown").to_string(),
+            run_timer_duration: tr("None").to_string(),
         };
 
         if let Some(map) = map() {
@@ -712,7 +721,7 @@ fn Info(state: ReadSignal<Option<MinimapState>>, map: ReadSignal<Option<Map>>) -
             info.erda_shower_state = state.erda_shower_state;
             info.input_state = state.input_state;
             info.run_timer_duration = match state.operation {
-                Operation::Halting | Operation::Running => "None".to_string(),
+                Operation::Halting | Operation::Running => tr("None").to_string(),
                 Operation::TemporaryHalting(duration) => duration_from(duration),
                 Operation::RunUntil(instant) => {
                     duration_from(instant.saturating_duration_since(Instant::now()))
@@ -740,16 +749,16 @@ fn Info(state: ReadSignal<Option<MinimapState>>, map: ReadSignal<Option<Map>>) -
 
     rsx! {
         div { class: "grid grid-cols-2 items-center justify-center px-4 py-3 gap-1",
-            InfoItem { name: "State", value: info().state }
-            InfoItem { name: "Position", value: info().position }
-            InfoItem { name: "HP", value: info().health }
-            InfoItem { name: "Priority action", value: info().priority_action }
-            InfoItem { name: "Normal action", value: info().normal_action }
+            InfoItem { name: tr("State"), value: info().state }
+            InfoItem { name: tr("Position"), value: info().position }
+            InfoItem { name: tr("HP"), value: info().health }
+            InfoItem { name: tr("Priority action"), value: info().priority_action }
+            InfoItem { name: tr("Normal action"), value: info().normal_action }
             InfoItem { name: "Erda Shower", value: info().erda_shower_state }
-            InfoItem { name: "Detected size", value: info().detected_map_size }
-            InfoItem { name: "Selected size", value: info().selected_map_size }
-            InfoItem { name: "Run timer", value: info().run_timer_duration }
-            InfoItem { name: "Input method", value: info().input_state }
+            InfoItem { name: tr("Detected size"), value: info().detected_map_size }
+            InfoItem { name: tr("Selected size"), value: info().selected_map_size }
+            InfoItem { name: tr("Run timer"), value: info().run_timer_duration }
+            InfoItem { name: tr("Input method"), value: info().input_state }
         }
     }
 }
@@ -846,7 +855,7 @@ fn Buttons(state: ReadSignal<Option<MinimapState>>, map: ReadSignal<Option<Map>>
                 on_click: move |_| async move {
                     redetect_minimap().await;
                 },
-                "Re-detect"
+                {tr("Re-detect")}
             }
         }
     }
@@ -884,7 +893,7 @@ fn ImportExport(map: ReadSignal<Option<Map>>) -> Element {
                 on_file: move |file| async move {
                     import_map(file).await;
                 },
-                Button { class: "w-20", style: ButtonStyle::Primary, "Import" }
+                Button { class: "w-20", style: ButtonStyle::Primary, {tr("Import")} }
             }
             FileOutput {
                 on_file: export_content,
@@ -895,7 +904,7 @@ fn ImportExport(map: ReadSignal<Option<Map>>) -> Element {
                     style: ButtonStyle::Primary,
                     disabled: map().is_none(),
 
-                    "Export"
+                    {tr("Export")}
                 }
             }
         }

@@ -4,6 +4,7 @@ use backend::{
 };
 use dioxus::prelude::*;
 
+use crate::i18n::tr;
 use crate::{
     actions::{ActionsContext, ITEM_BORDER_CLASS, ITEM_TEXT_CLASS, inner::filter_actions},
     components::{
@@ -129,7 +130,7 @@ pub fn ActionsList(
                 disabled,
                 class: "mt-2 w-full",
 
-                "Add action"
+                {tr("Add action")}
             }
         }
     }

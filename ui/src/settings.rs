@@ -8,6 +8,7 @@ use backend::{
 use dioxus::{html::FileData, prelude::*};
 use futures_util::StreamExt;
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     components::{
@@ -94,17 +95,17 @@ fn SectionCapture() -> Element {
         names
     });
     let handle_names_with_default = use_memo(move || {
-        let default = vec!["Default".to_string()];
+        let default = vec![tr("Default").to_string()];
         let names = handle_names().unwrap_or_default();
 
         [default, names].concat()
     });
 
     rsx! {
-        Section { title: "Capture",
+        Section { title: tr("Capture"),
             div { class: "grid grid-cols-2 gap-3",
                 SettingsSelect {
-                    label: "Handle",
+                    label: tr("Handle"),
                     options: handle_names_with_default(),
                     on_selected: move |index| async move {
                         if index == 0 {
@@ -118,7 +119,7 @@ fn SectionCapture() -> Element {
                     selected: selected_handle_index().map(|index| index + 1).unwrap_or_default(),
                 }
                 SettingsEnumSelect::<CaptureMode> {
-                    label: "Mode",
+                    label: tr("Mode"),
                     on_selected: move |capture_mode| {
                         save_settings(Settings {
                             capture_mode,
@@ -136,7 +137,7 @@ fn SectionCapture() -> Element {
                 },
                 class: "mt-2",
 
-                "Refresh handles"
+                {tr("Refresh handles")}
             }
         }
     }
@@ -149,10 +150,10 @@ fn SectionInput() -> Element {
     let save_settings = context.save_settings;
 
     rsx! {
-        Section { title: "Input",
+        Section { title: tr("Input"),
             div { class: "grid grid-cols-3 gap-3",
                 SettingsEnumSelect::<InputMethod> {
-                    label: "Method",
+                    label: tr("Method"),
                     on_selected: move |input_method| async move {
                         save_settings(Settings {
                             input_method,
@@ -162,8 +163,8 @@ fn SectionInput() -> Element {
                     selected: settings().input_method,
                 }
                 SettingsTextInput {
-                    text_label: "RPC server URL",
-                    button_label: "Update",
+                    text_label: tr("RPC server URL"),
+                    button_label: tr("Update"),
                     on_value: move |input_method_rpc_server_url| {
                         save_settings(Settings {
                             input_method_rpc_server_url,
@@ -185,10 +186,10 @@ fn SectionNotifications() -> Element {
     let notifications = use_memo(move || settings().notifications);
 
     rsx! {
-        Section { title: "Notifications",
+        Section { title: tr("Notifications"),
             div { class: "grid grid-cols-2 gap-3 mb-2",
                 SettingsEnumSelect::<WebhookProvider> {
-                    label: "Webhook provider",
+                    label: tr("Webhook provider"),
                     on_selected: move |webhook_provider| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -202,8 +203,8 @@ fn SectionNotifications() -> Element {
                 }
                 div {}
                 SettingsTextInput {
-                    text_label: "Webhook URL",
-                    button_label: "Update",
+                    text_label: tr("Webhook URL"),
+                    button_label: tr("Update"),
                     sensitive: true,
                     on_value: move |webhook_url| {
                         save_settings(Settings {
@@ -217,8 +218,8 @@ fn SectionNotifications() -> Element {
                     value: notifications().webhook_url,
                 }
                 SettingsTextInput {
-                    text_label: "Discord ping user ID",
-                    button_label: "Update",
+                    text_label: tr("Discord ping user ID"),
+                    button_label: tr("Update"),
                     sensitive: true,
                     on_value: move |discord_user_id| {
                         save_settings(Settings {
@@ -234,7 +235,7 @@ fn SectionNotifications() -> Element {
             }
             div { class: "grid grid-cols-3 gap-3",
                 SettingsCheckbox {
-                    label: "Rune spawns",
+                    label: tr("Rune spawns"),
                     on_checked: move |notify_on_rune_appear| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -247,7 +248,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_rune_appear,
                 }
                 SettingsCheckbox {
-                    label: "Elite boss spawns",
+                    label: tr("Elite boss spawns"),
                     on_checked: move |notify_on_elite_boss_appear| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -260,7 +261,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_elite_boss_appear,
                 }
                 SettingsCheckbox {
-                    label: "Player dies",
+                    label: tr("Player dies"),
                     on_checked: move |notify_on_player_die| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -273,7 +274,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_player_die,
                 }
                 SettingsCheckbox {
-                    label: "Guildie appears",
+                    label: tr("Guildie appears"),
                     on_checked: move |notify_on_player_guildie_appear| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -286,7 +287,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_player_guildie_appear,
                 }
                 SettingsCheckbox {
-                    label: "Stranger appears",
+                    label: tr("Stranger appears"),
                     on_checked: move |notify_on_player_stranger_appear| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -299,7 +300,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_player_stranger_appear,
                 }
                 SettingsCheckbox {
-                    label: "Friend appears",
+                    label: tr("Friend appears"),
                     on_checked: move |notify_on_player_friend_appear| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -312,7 +313,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_player_friend_appear,
                 }
                 SettingsCheckbox {
-                    label: "Detection fails or map changes",
+                    label: tr("Detection fails or map changes"),
                     on_checked: move |notify_on_fail_or_change_map| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -325,7 +326,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_fail_or_change_map,
                 }
                 SettingsCheckbox {
-                    label: "Lie detector appears",
+                    label: tr("Lie detector appears"),
                     on_checked: move |notify_on_lie_detector_appear| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -338,7 +339,7 @@ fn SectionNotifications() -> Element {
                     checked: notifications().notify_on_lie_detector_appear,
                 }
                 SettingsCheckbox {
-                    label: "Run timer ends",
+                    label: tr("Run timer ends"),
                     on_checked: move |notify_on_run_timer_end| {
                         save_settings(Settings {
                             notifications: Notifications {
@@ -377,7 +378,7 @@ fn SectionHotkeys() -> Element {
                     value: value.key,
                 }
                 SettingsCheckbox {
-                    label: "Enabled",
+                    label: tr("Enabled"),
                     on_checked: move |enabled| {
                         on_value(KeyBindingConfiguration {
                             enabled,
@@ -395,10 +396,10 @@ fn SectionHotkeys() -> Element {
     let save_settings = context.save_settings;
 
     rsx! {
-        Section { title: "Hotkeys",
+        Section { title: tr("Hotkeys"),
             div { class: "grid grid-cols-2 gap-3",
                 Hotkey {
-                    label: "Toggle start/stop actions",
+                    label: tr("Toggle start/stop actions"),
                     on_value: move |toggle_actions_key| {
                         save_settings(Settings {
                             toggle_actions_key,
@@ -408,7 +409,7 @@ fn SectionHotkeys() -> Element {
                     value: settings().toggle_actions_key,
                 }
                 Hotkey {
-                    label: "Add platform",
+                    label: tr("Add platform"),
                     on_value: move |platform_add_key| {
                         save_settings(Settings {
                             platform_add_key,
@@ -418,7 +419,7 @@ fn SectionHotkeys() -> Element {
                     value: settings().platform_add_key,
                 }
                 Hotkey {
-                    label: "Mark platform start",
+                    label: tr("Mark platform start"),
                     on_value: move |platform_start_key| {
                         save_settings(Settings {
                             platform_start_key,
@@ -428,7 +429,7 @@ fn SectionHotkeys() -> Element {
                     value: settings().platform_start_key,
                 }
                 Hotkey {
-                    label: "Mark platform end",
+                    label: tr("Mark platform end"),
                     on_value: move |platform_end_key| {
                         save_settings(Settings {
                             platform_end_key,
@@ -438,7 +439,7 @@ fn SectionHotkeys() -> Element {
                     value: settings().platform_end_key,
                 }
                 Hotkey {
-                    label: "Add move action",
+                    label: tr("Add move action"),
                     on_value: move |action_move_add_key| {
                         save_settings(Settings {
                             action_move_add_key,
@@ -459,9 +460,9 @@ fn SectionRunTimer() -> Element {
     let save_settings = context.save_settings;
 
     rsx! {
-        Section { title: "Run timer",
+        Section { title: tr("Run timer"),
             div { class: "grid grid-cols-2 gap-3",
-                Labeled { label: "Duration (hh:mm:ss)",
+                Labeled { label: tr("Duration (hh:mm:ss)"),
                     DurationInput {
                         on_value: move |run_timer_millis| {
                             save_settings(Settings {
@@ -473,7 +474,7 @@ fn SectionRunTimer() -> Element {
                     }
                 }
                 SettingsCheckbox {
-                    label: "Enabled",
+                    label: tr("Enabled"),
                     on_checked: move |run_timer| {
                         save_settings(Settings {
                             run_timer,
@@ -508,10 +509,10 @@ fn SectionOthers() -> Element {
     });
 
     rsx! {
-        Section { title: "Others",
+        Section { title: tr("Others"),
             div { class: "grid grid-cols-2 gap-3",
                 SettingsCheckbox {
-                    label: "Enable rune solving",
+                    label: tr("Enable rune solving"),
                     on_checked: move |enable_rune_solving| {
                         save_settings(Settings {
                             enable_rune_solving,
@@ -521,7 +522,7 @@ fn SectionOthers() -> Element {
                     checked: settings().enable_rune_solving,
                 }
                 SettingsCheckbox {
-                    label: "Enable transparent shape solving",
+                    label: tr("Enable transparent shape solving"),
                     on_checked: move |enable_transparent_shape_solving| {
                         save_settings(Settings {
                             enable_transparent_shape_solving,
@@ -531,7 +532,7 @@ fn SectionOthers() -> Element {
                     checked: settings().enable_transparent_shape_solving,
                 }
                 SettingsCheckbox {
-                    label: "Enable Violetta solving",
+                    label: tr("Enable Violetta solving"),
                     on_checked: move |enable_violetta_solving| {
                         save_settings(Settings {
                             enable_violetta_solving,
@@ -541,7 +542,7 @@ fn SectionOthers() -> Element {
                     checked: settings().enable_violetta_solving,
                 }
                 SettingsCheckbox {
-                    label: "Enable panic mode",
+                    label: tr("Enable panic mode"),
                     on_checked: move |enable_panic_mode| {
                         save_settings(Settings {
                             enable_panic_mode,
@@ -551,7 +552,7 @@ fn SectionOthers() -> Element {
                     checked: settings().enable_panic_mode,
                 }
                 SettingsCheckbox {
-                    label: "Stop actions on fail or map changed",
+                    label: tr("Stop actions on fail or map changed"),
                     on_checked: move |stop_on_fail_or_change_map| {
                         save_settings(Settings {
                             stop_on_fail_or_change_map,
@@ -561,7 +562,7 @@ fn SectionOthers() -> Element {
                     checked: settings().stop_on_fail_or_change_map,
                 }
                 SettingsCheckbox {
-                    label: "Stop actions on player dies",
+                    label: tr("Stop actions on player dies"),
                     on_checked: move |stop_on_player_die| {
                         save_settings(Settings {
                             stop_on_player_die,
@@ -576,13 +577,13 @@ fn SectionOthers() -> Element {
                             on_file: move |file| async move {
                                 import_settings(file).await;
                             },
-                            Button { class: "w-full", style: ButtonStyle::Primary, "Import" }
+                            Button { class: "w-full", style: ButtonStyle::Primary, {tr("Import")} }
                         }
 
                         FileOutput {
                             on_file: move |_| { serde_json::to_vec_pretty(&*settings.peek()).unwrap_or_default() },
                             download: "settings.json",
-                            Button { class: "w-full", style: ButtonStyle::Primary, "Export" }
+                            Button { class: "w-full", style: ButtonStyle::Primary, {tr("Export")} }
                         }
                     }
                 }

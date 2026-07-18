@@ -3,6 +3,7 @@ use std::{mem::discriminant, ops::Range};
 use backend::{Action, ActionCondition, ActionKey};
 use dioxus::{html::FileData, prelude::*};
 
+use crate::i18n::tr;
 use crate::{
     actions::{
         ActionsContext, ActionsUpdate,
@@ -216,7 +217,7 @@ pub fn SectionActions(actions: Memo<Vec<Action>>, disabled: bool) -> Element {
             on_open: move |open: bool| {
                 popup_open.set(open);
             },
-            Section { title: "Normal actions",
+            Section { title: tr("Normal actions"),
                 ActionsList {
                     on_add_click: move |_| {
                         handle_add_action_click(ActionCondition::Any);
@@ -229,7 +230,7 @@ pub fn SectionActions(actions: Memo<Vec<Action>>, disabled: bool) -> Element {
                     actions: actions(),
                 }
             }
-            Section { title: "Erda Shower off cooldown priority actions",
+            Section { title: tr("Erda Shower off cooldown priority actions"),
                 ActionsList {
                     on_add_click: move |_| {
                         handle_add_action_click(ActionCondition::ErdaShowerOffCooldown);
@@ -242,7 +243,7 @@ pub fn SectionActions(actions: Memo<Vec<Action>>, disabled: bool) -> Element {
                     actions: actions(),
                 }
             }
-            Section { title: "Every milliseconds priority actions",
+            Section { title: tr("Every milliseconds priority actions"),
                 ActionsList {
                     on_add_click: move |_| {
                         handle_add_action_click(ActionCondition::EveryMillis(0));
@@ -255,7 +256,7 @@ pub fn SectionActions(actions: Memo<Vec<Action>>, disabled: bool) -> Element {
                     actions: actions(),
                 }
             }
-            Section { title: "Import/export actions",
+            Section { title: tr("Import/export actions"),
                 div { class: "flex gap-2",
                     FileInput {
                         class: "flex-grow",
@@ -267,7 +268,7 @@ pub fn SectionActions(actions: Memo<Vec<Action>>, disabled: bool) -> Element {
                             class: "w-full",
                             style: ButtonStyle::Primary,
                             disabled,
-                            "Import"
+                            {tr("Import")}
                         }
                     }
                     FileOutput {
@@ -279,7 +280,7 @@ pub fn SectionActions(actions: Memo<Vec<Action>>, disabled: bool) -> Element {
                             class: "w-full",
                             style: ButtonStyle::Primary,
                             disabled,
-                            "Export"
+                            {tr("Export")}
                         }
                     }
                 }

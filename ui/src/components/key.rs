@@ -5,6 +5,7 @@ use dioxus::prelude::*;
 use tw_merge::tw_merge;
 
 use crate::components::{icons::XIcon, use_controlled};
+use crate::i18n::tr;
 
 const DIV_CLASS: &str = "inline-block relative bg-secondary-surface h-6 group";
 const INPUT_CLASS: &str = "absolute inset-0 outline-none size-full text-center text-xs text-secondary-text disabled:cursor-not-allowed disabled:text-tertiary-text";
@@ -78,14 +79,14 @@ pub fn KeyInput(props: KeyInputProps) -> Element {
                 onfocus: handle_focus,
                 onblur: handle_blur,
                 onkeydown: handle_key_down,
-                placeholder: "Click to set",
+                placeholder: tr("Click to set"),
                 value: value().map(|key| key.to_string()),
             }
             if active() {
                 div {
                     class: if error() { "{ACTIVE_DIV_CLASS} text-danger-text" },
                     class: if !error() { "{ACTIVE_DIV_CLASS} text-primary-text" },
-                    "Press any key..."
+                    {tr("Press any key...")}
                 }
             }
             if optional && !active() && value().is_some() {

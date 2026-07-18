@@ -1,6 +1,7 @@
 use backend::{Action, ActionCondition, ActionKey, Bound, MobbingKey, Platform, state_receiver};
 use dioxus::{core::Task, document::EvalError, prelude::*};
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     actions::{ActionsNumberInputI32, ActionsPositionInput, input::ActionsInput},
@@ -23,10 +24,10 @@ pub fn PopupPlatformInputContent(
     use_effect(use_reactive!(|value| platform.set(value)));
 
     rsx! {
-        PopupContent { title: if modifying { "Modify platform" } else { "Add platform" },
+        PopupContent { title: if modifying { tr("Modify platform") } else { tr("Add platform") },
             div { class: "grid grid-cols-3 gap-3 pb-10 overflow-y-auto",
                 ActionsPositionInput {
-                    label: "X start",
+                    label: tr("X start"),
                     on_icon_click: move |_| {
                         platform.write().x_start = position.peek().0;
                     },
@@ -36,7 +37,7 @@ pub fn PopupPlatformInputContent(
                     value: platform().x_start,
                 }
                 ActionsPositionInput {
-                    label: "X end",
+                    label: tr("X end"),
                     on_icon_click: move |_| {
                         platform.write().x_end = position.peek().0;
                     },
@@ -46,7 +47,7 @@ pub fn PopupPlatformInputContent(
                     value: platform().x_end,
                 }
                 ActionsPositionInput {
-                    label: "Y",
+                    label: tr("Y"),
                     on_icon_click: move |_| {
                         platform.write().y = position.peek().1;
                     },
@@ -66,9 +67,9 @@ pub fn PopupPlatformInputContent(
                     },
 
                     if modifying {
-                        "Save"
+                        {tr("Save")}
                     } else {
-                        "Add"
+                        {tr("Add")}
                     }
                 }
                 Button {
@@ -77,7 +78,7 @@ pub fn PopupPlatformInputContent(
                     on_click: move |_| {
                         on_cancel(());
                     },
-                    "Cancel"
+                    {tr("Cancel")}
                 }
             }
         }
@@ -221,13 +222,13 @@ pub fn PopupMobbingBoundInputContent(
     });
 
     rsx! {
-        PopupContent { title: "Modify mobbing bound",
+        PopupContent { title: tr("Modify mobbing bound"),
             if frame().is_some() {
                 canvas { class: "w-full h-full", id: "bound" }
             }
             div { class: "grid grid-cols-2 gap-3 pb-10 overflow-y-auto",
                 ActionsNumberInputI32 {
-                    label: "X offset",
+                    label: tr("X offset"),
                     on_value: move |x| {
                         value.write().x = x;
                     },
@@ -235,7 +236,7 @@ pub fn PopupMobbingBoundInputContent(
                 }
 
                 ActionsNumberInputI32 {
-                    label: "Y offset",
+                    label: tr("Y offset"),
                     on_value: move |y| {
                         value.write().y = y;
                     },
@@ -243,7 +244,7 @@ pub fn PopupMobbingBoundInputContent(
                 }
 
                 ActionsNumberInputI32 {
-                    label: "Width",
+                    label: tr("Width"),
                     on_value: move |width| {
                         value.write().width = width;
                     },
@@ -251,7 +252,7 @@ pub fn PopupMobbingBoundInputContent(
                 }
 
                 ActionsNumberInputI32 {
-                    label: "Height",
+                    label: tr("Height"),
                     on_value: move |height| {
                         value.write().height = height;
                     },
@@ -267,7 +268,7 @@ pub fn PopupMobbingBoundInputContent(
                         on_value(*value.peek());
                     },
 
-                    "Save"
+                    {tr("Save")}
                 }
                 Button {
                     class: "flex-grow",
@@ -275,7 +276,7 @@ pub fn PopupMobbingBoundInputContent(
                     on_click: move |_| {
                         on_cancel(());
                     },
-                    "Cancel"
+                    {tr("Cancel")}
                 }
             }
         }
@@ -303,7 +304,7 @@ pub fn PopupMobbingKeyInputContent(
     let value_action = Action::Key(value_action_key);
 
     rsx! {
-        PopupContent { title: "Modify mobbing key",
+        PopupContent { title: tr("Modify mobbing key"),
             ActionsInput {
                 switchable: false,
                 modifying: true,
@@ -349,15 +350,15 @@ pub fn PopupActionsInputContent(
     value: Action,
 ) -> Element {
     let name = match value.condition() {
-        backend::ActionCondition::Any => "normal",
-        backend::ActionCondition::EveryMillis(_) => "every milliseconds",
-        backend::ActionCondition::ErdaShowerOffCooldown => "Erda Shower off cooldown",
-        backend::ActionCondition::Linked => "linked",
+        backend::ActionCondition::Any => tr("normal"),
+        backend::ActionCondition::EveryMillis(_) => tr("every milliseconds"),
+        backend::ActionCondition::ErdaShowerOffCooldown => tr("Erda Shower off cooldown"),
+        backend::ActionCondition::Linked => tr("linked"),
     };
     let title = if modifying {
-        format!("Modify a {name} action")
+        format!(tr("Modify a {name} action"), name = name)
     } else {
-        format!("Add a new {name} action")
+        format!(tr("Add a new {name} action"), name = name)
     };
 
     rsx! {

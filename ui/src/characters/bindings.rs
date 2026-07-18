@@ -1,6 +1,7 @@
 use backend::{Character, KeyBindingConfiguration};
 use dioxus::prelude::*;
 
+use crate::i18n::tr;
 use crate::{
     characters::{CharactersContext, CharactersKeyBindingConfigurationInput},
     components::section::Section,
@@ -13,10 +14,10 @@ pub fn SectionKeyBindings() -> Element {
     let save_character = context.save_character;
 
     rsx! {
-        Section { title: "Key bindings",
+        Section { title: tr("Key bindings"),
             div { class: "grid grid-cols-2 2xl:grid-cols-4 gap-4",
                 CharactersKeyBindingConfigurationInput {
-                    label: "Rope lift",
+                    label: tr("Rope lift"),
                     optional: true,
                     disabled: character().id.is_none(),
                     on_value: move |ropelift_key| {
@@ -28,7 +29,7 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().ropelift_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "Teleport",
+                    label: tr("Teleport"),
                     optional: true,
                     disabled: character().id.is_none(),
                     on_value: move |teleport_key| {
@@ -40,7 +41,7 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().teleport_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "Jump",
+                    label: tr("Jump"),
                     disabled: character().id.is_none(),
                     on_value: move |key_config: Option<KeyBindingConfiguration>| {
                         save_character(Character {
@@ -51,9 +52,9 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().jump_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "Up jump",
+                    label: tr("Up jump"),
                     optional: true,
-                    tooltip: "This is meant for classes that have a separate skill to up jump. Classes that use up arrow should set this key to up arrow.",
+                    tooltip: tr("This is meant for classes that have a separate skill to up jump. Classes that use up arrow should set this key to up arrow."),
                     disabled: character().id.is_none(),
                     on_value: move |up_jump_key| {
                         save_character(Character {
@@ -64,7 +65,7 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().up_jump_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "Interact",
+                    label: tr("Interact"),
                     disabled: character().id.is_none(),
                     on_value: move |key_config: Option<KeyBindingConfiguration>| {
                         save_character(Character {
@@ -75,10 +76,10 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().interact_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "Cash shop",
+                    label: tr("Cash shop"),
                     optional: true,
                     disabled: character().id.is_none(),
-                    tooltip: "Cash shop is used to reset spin rune to a normal rune. This only happens if solving rune fails 8 times consecutively.",
+                    tooltip: tr("Cash shop is used to reset spin rune to a normal rune. This only happens if solving rune fails 8 times consecutively."),
                     on_value: move |cash_shop_key| {
                         save_character(Character {
                             cash_shop_key,
@@ -88,10 +89,10 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().cash_shop_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "To town",
+                    label: tr("To town"),
                     optional: true,
                     disabled: character().id.is_none(),
-                    tooltip: "This key must be set to use navigation or run/stop cycle features.",
+                    tooltip: tr("This key must be set to use navigation or run/stop cycle features."),
                     on_value: move |to_town_key| {
                         save_character(Character {
                             to_town_key,
@@ -101,10 +102,10 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().to_town_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "Change channel",
+                    label: tr("Change channel"),
                     optional: true,
                     disabled: character().id.is_none(),
-                    tooltip: "This key must be set to use panic mode or elite boss spawns behavior features.",
+                    tooltip: tr("This key must be set to use panic mode or elite boss spawns behavior features."),
                     on_value: move |change_channel_key| {
                         save_character(Character {
                             change_channel_key,
@@ -114,9 +115,9 @@ pub fn SectionKeyBindings() -> Element {
                     value: character().change_channel_key,
                 }
                 CharactersKeyBindingConfigurationInput {
-                    label: "Familiar menu",
+                    label: tr("Familiar menu"),
                     optional: true,
-                    tooltip: "This key must be set to use familiars swapping feature.",
+                    tooltip: tr("This key must be set to use familiars swapping feature."),
                     disabled: character().id.is_none(),
                     on_value: move |familiar_menu_key| {
                         save_character(Character {

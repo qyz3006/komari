@@ -5,6 +5,7 @@ use backend::{
 use dioxus::{html::FileData, prelude::*};
 use futures_util::{StreamExt, future::OptionFuture};
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     components::{
@@ -92,71 +93,71 @@ fn SectionInfo() -> Element {
     }
 
     rsx! {
-        Section { title: "Info",
+        Section { title: tr("Info"),
             table { class: "table-fixed",
                 thead {
                     tr {
-                        Header { title: "Section" }
-                        Header { title: "Function" }
-                        Header { title: "Template(s)" }
+                        Header { title: tr("Section") }
+                        Header { title: tr("Function") }
+                        Header { title: tr("Template(s)") }
                     }
                 }
                 tbody {
                     tr {
-                        Data { description: "Popups", rowspan: 3 }
-                        Data { description: "Unstuck player through closing menu, popup, dialog, etc." }
-                        Data { description: "All popups." }
+                        Data { description: tr("Popups"), rowspan: 3 }
+                        Data { description: tr("Unstuck player through closing menu, popup, dialog, etc.") }
+                        Data { description: tr("All popups.") }
                     }
                     tr {
-                        Data { description: "Go to town confirmation and save familiars setup." }
-                        Data { description: "Confirm popup." }
+                        Data { description: tr("Go to town confirmation and save familiars setup.") }
+                        Data { description: tr("Confirm popup.") }
                     }
                     tr {
-                        Data { description: "Respawn on player death." }
-                        Data { description: "Ok (new) popup." }
+                        Data { description: tr("Respawn on player death.") }
+                        Data { description: tr("Ok (new) popup.") }
                     }
                     tr {
                         Data { description: "Familiars", rowspan: 2 }
-                        Data { description: "Sort familiar cards by level before swapping." }
-                        Data { description: "Familiar menu setup tab's setup level sort button." }
+                        Data { description: tr("Sort familiar cards by level before swapping.") }
+                        Data { description: tr("Familiar menu setup tab's setup level sort button.") }
                     }
                     tr {
-                        Data { description: "Save familiars setup after swapping." }
-                        Data { description: "Familiar menu setup tab's save button." }
+                        Data { description: tr("Save familiars setup after swapping.") }
+                        Data { description: tr("Familiar menu setup tab's save button.") }
                     }
                     tr {
                         Data { description: "HEXA", rowspan: 4 }
-                        Data { description: "Open Sol Erda version menu in HEXA Matrix." }
-                        Data { description: "Erda conversion button." }
+                        Data { description: tr("Open Sol Erda version menu in HEXA Matrix.") }
+                        Data { description: tr("Erda conversion button.") }
                     }
                     tr {
-                        Data { description: "Open HEXA Booster exchange menu." }
-                        Data { description: "HEXA Booster button." }
+                        Data { description: tr("Open HEXA Booster exchange menu.") }
+                        Data { description: tr("HEXA Booster button.") }
                     }
                     tr {
-                        Data { description: "Select max HEXA Booster amount to exchange." }
-                        Data { description: "Max button." }
+                        Data { description: tr("Select max HEXA Booster amount to exchange.") }
+                        Data { description: tr("Max button.") }
                     }
                     tr {
-                        Data { description: "Convert Sol Erda to HEXA Booster." }
-                        Data { description: "Convert button." }
+                        Data { description: tr("Convert Sol Erda to HEXA Booster.") }
+                        Data { description: tr("Convert button.") }
                     }
                     tr {
-                        Data { description: "Others", rowspan: 4 }
-                        Data { description: "Detect whether change channel menu is opened." }
-                        Data { description: "Change channel text." }
+                        Data { description: tr("Others"), rowspan: 4 }
+                        Data { description: tr("Detect whether change channel menu is opened.") }
+                        Data { description: tr("Change channel text.") }
                     }
                     tr {
-                        Data { description: "Detect whether player entered cash shop." }
-                        Data { description: "Cash shop text." }
+                        Data { description: tr("Detect whether player entered cash shop.") }
+                        Data { description: tr("Cash shop text.") }
                     }
                     tr {
-                        Data { description: "Detect whether Generic/HEXA booster is in use." }
-                        Data { description: "Timer text." }
+                        Data { description: tr("Detect whether Generic/HEXA booster is in use.") }
+                        Data { description: tr("Timer text.") }
                     }
                     tr {
-                        Data { description: "Detect lie detector event." }
-                        Data { description: "Lie detector title." }
+                        Data { description: tr("Detect lie detector event.") }
+                        Data { description: tr("Lie detector title.") }
                     }
                 }
             }
@@ -166,14 +167,14 @@ fn SectionInfo() -> Element {
                     on_click: move |_| async move {
                         save_capture_image(false).await;
                     },
-                    "Capture color"
+                    {tr("Capture color")}
                 }
                 Button {
                     style: ButtonStyle::Primary,
                     on_click: move |_| async move {
                         save_capture_image(true).await;
                     },
-                    "Capture grayscale"
+                    {tr("Capture grayscale")}
                 }
             }
         }
@@ -187,10 +188,10 @@ fn SectionPopups() -> Element {
     let save_localization = context.save_localization;
 
     rsx! {
-        Section { title: "Popups",
+        Section { title: tr("Popups"),
             div { class: "grid grid-cols-2  gap-4",
                 LocalizationTemplateInput {
-                    label: "Confirm",
+                    label: tr("Confirm"),
                     template: DetectionTemplate::PopupConfirm,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -201,7 +202,7 @@ fn SectionPopups() -> Element {
                     value: localization().popup_confirm_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Yes",
+                    label: tr("Yes"),
                     template: DetectionTemplate::PopupYes,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -212,7 +213,7 @@ fn SectionPopups() -> Element {
                     value: localization().popup_yes_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Next",
+                    label: tr("Next"),
                     template: DetectionTemplate::PopupNext,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -223,7 +224,7 @@ fn SectionPopups() -> Element {
                     value: localization().popup_next_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "End chat",
+                    label: tr("End chat"),
                     template: DetectionTemplate::PopupEndChat,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -234,7 +235,7 @@ fn SectionPopups() -> Element {
                     value: localization().popup_end_chat_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Ok (new)",
+                    label: tr("Ok (new)"),
                     template: DetectionTemplate::PopupOkNew,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -245,7 +246,7 @@ fn SectionPopups() -> Element {
                     value: localization().popup_ok_new_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Ok (old)",
+                    label: tr("Ok (old)"),
                     template: DetectionTemplate::PopupOkOld,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -256,7 +257,7 @@ fn SectionPopups() -> Element {
                     value: localization().popup_ok_old_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Cancel (new)",
+                    label: tr("Cancel (new)"),
                     template: DetectionTemplate::PopupCancelNew,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -267,7 +268,7 @@ fn SectionPopups() -> Element {
                     value: localization().popup_cancel_new_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Cancel (old)",
+                    label: tr("Cancel (old)"),
                     template: DetectionTemplate::PopupCancelOld,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -292,7 +293,7 @@ fn SectionHexa() -> Element {
         Section { title: "HEXA",
             div { class: "grid grid-cols-2 gap-4",
                 LocalizationTemplateInput {
-                    label: "Erda conversion button",
+                    label: tr("Erda conversion button"),
                     template: DetectionTemplate::HexaErdaConversionButton,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -303,7 +304,7 @@ fn SectionHexa() -> Element {
                     value: localization().hexa_erda_conversion_button_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "HEXA Booster button",
+                    label: tr("HEXA Booster button"),
                     template: DetectionTemplate::HexaBoosterButton,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -314,7 +315,7 @@ fn SectionHexa() -> Element {
                     value: localization().hexa_booster_button_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Max button",
+                    label: tr("Max button"),
                     template: DetectionTemplate::HexaMaxButton,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -325,7 +326,7 @@ fn SectionHexa() -> Element {
                     value: localization().hexa_max_button_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Convert button",
+                    label: tr("Convert button"),
                     template: DetectionTemplate::HexaConvertButton,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -350,7 +351,7 @@ fn SectionFamiliars() -> Element {
         Section { title: "Familiars",
             div { class: "grid grid-cols-2 gap-4",
                 LocalizationTemplateInput {
-                    label: "Level sort button",
+                    label: tr("Level sort button"),
                     template: DetectionTemplate::FamiliarsLevelSort,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -361,7 +362,7 @@ fn SectionFamiliars() -> Element {
                     value: localization().familiar_level_button_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Save button",
+                    label: tr("Save button"),
                     template: DetectionTemplate::FamiliarsSaveButton,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -383,10 +384,10 @@ fn SectionOthers() -> Element {
     let save_localization = context.save_localization;
 
     rsx! {
-        Section { title: "Others",
+        Section { title: tr("Others"),
             div { class: "grid grid-cols-2 gap-4",
                 LocalizationTemplateInput {
-                    label: "Cash shop",
+                    label: tr("Cash shop"),
                     template: DetectionTemplate::CashShop,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -397,9 +398,9 @@ fn SectionOthers() -> Element {
                     value: localization().cash_shop_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Change channel",
+                    label: tr("Change channel"),
                     template: DetectionTemplate::ChangeChannel,
-                    tooltip: "This template is in grayscale.",
+                    tooltip: tr("This template is in grayscale."),
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
                             change_channel_base64: to_base64(image, true).await,
@@ -409,9 +410,9 @@ fn SectionOthers() -> Element {
                     value: localization().change_channel_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Timer",
+                    label: tr("Timer"),
                     template: DetectionTemplate::Timer,
-                    tooltip: "This template is in grayscale.",
+                    tooltip: tr("This template is in grayscale."),
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
                             timer_base64: to_base64(image, true).await,
@@ -421,7 +422,7 @@ fn SectionOthers() -> Element {
                     value: localization().timer_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Lie detector (new)",
+                    label: tr("Lie detector (new)"),
                     template: DetectionTemplate::LieDetectorNew,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -432,7 +433,7 @@ fn SectionOthers() -> Element {
                     value: localization().lie_detector_new_base64,
                 }
                 LocalizationTemplateInput {
-                    label: "Lie detector (old)",
+                    label: tr("Lie detector (old)"),
                     template: DetectionTemplate::LieDetectorOld,
                     on_value: move |image: Option<Vec<u8>>| async move {
                         save_localization(Localization {
@@ -490,7 +491,7 @@ fn LocalizationTemplateInput(
                         on_value(None);
                     },
 
-                    "Reset"
+                    {tr("Reset")}
                 }
             }
             div { class: "flex items-end",
@@ -499,7 +500,7 @@ fn LocalizationTemplateInput(
                         read_file(file).await;
                     },
                     accept: ".png,image/png",
-                    Button { class: "w-14", style: ButtonStyle::Primary, "Replace" }
+                    Button { class: "w-14", style: ButtonStyle::Primary, {tr("Replace")} }
                 }
             }
         }

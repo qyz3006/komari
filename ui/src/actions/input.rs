@@ -6,6 +6,7 @@ use backend::{
 };
 use dioxus::prelude::*;
 
+use crate::i18n::tr;
 use crate::{
     AppState,
     actions::{
@@ -137,9 +138,9 @@ pub fn ActionsInput(
                             on_click: handle_switch,
                             class: "text-xxs",
                             if matches!(current_value(), Action::Move(_)) {
-                                "Switch to key"
+                                {tr("Switch to key")}
                             } else {
-                                "Switch to move"
+                                {tr("Switch to move")}
                             }
                         }
                     }
@@ -148,7 +149,7 @@ pub fn ActionsInput(
                             style: ButtonStyle::Primary,
                             on_click: on_copy,
                             class: "text-xxs",
-                            "Copy"
+                            {tr("Copy")}
                         }
                     }
                 }
@@ -219,7 +220,7 @@ fn ActionsMoveInput(
         div { class: "grid grid-cols-3 gap-3",
             // Position
             ActionsCheckbox {
-                label: "Adjust",
+                label: tr("Adjust"),
                 on_checked: handle_adjusting_update,
                 checked: current_value().position.allow_adjusting,
             }
@@ -227,7 +228,7 @@ fn ActionsMoveInput(
             div { class: "col-span-2" }
 
             ActionsPositionInput {
-                label: "X",
+                label: tr("X"),
                 on_icon_click: handle_x_icon_click,
                 on_value: move |x| {
                     update_position(current_value_position, PositionUpdate::X(x));
@@ -236,7 +237,7 @@ fn ActionsMoveInput(
             }
 
             ActionsNumberInputI32 {
-                label: "X random range",
+                label: tr("X random range"),
                 on_value: move |x| {
                     update_position(current_value_position, PositionUpdate::XRange(x));
                 },
@@ -244,7 +245,7 @@ fn ActionsMoveInput(
             }
 
             ActionsPositionInput {
-                label: "Y",
+                label: tr("Y"),
                 on_icon_click: handle_y_icon_click,
                 on_value: move |y| {
                     update_position(current_value_position, PositionUpdate::Y(y));
@@ -253,7 +254,7 @@ fn ActionsMoveInput(
             }
 
             ActionsMillisInput {
-                label: "Wait after move",
+                label: tr("Wait after move"),
                 on_value: move |millis| {
                     let mut action = current_value.write();
                     action.wait_after_move_millis = millis;
@@ -263,7 +264,7 @@ fn ActionsMoveInput(
 
             if linkable {
                 ActionsCheckbox {
-                    label: "Linked action",
+                    label: tr("Linked action"),
                     on_checked: move |is_linked: bool| {
                         let mut action = current_value.write();
                         action.condition = if is_linked {
@@ -285,9 +286,9 @@ fn ActionsMoveInput(
                     on_value((*current_value.peek(), value_condition));
                 },
                 if modifying {
-                    "Save"
+                    {tr("Save")}
                 } else {
-                    "Add"
+                    {tr("Add")}
                 }
             }
 
@@ -297,7 +298,7 @@ fn ActionsMoveInput(
                 on_click: move |_| {
                     on_cancel(());
                 },
-                "Cancel"
+                {tr("Cancel")}
             }
         }
     }
@@ -332,7 +333,7 @@ fn ActionsKeyInput(
 
             // Key, count and link key
             ActionsKeyBindingInput {
-                label: "Key",
+                label: tr("Key"),
                 disabled: false,
                 on_value: move |key: Option<KeyBinding>| {
                     let mut action = current_value.write();
@@ -342,7 +343,7 @@ fn ActionsKeyInput(
             }
             div { class: "grid grid-cols-2 gap-3",
                 ActionsNumberInputU32 {
-                    label: "Use count",
+                    label: tr("Use count"),
                     on_value: move |count| {
                         let mut action = current_value.write();
                         action.count = count;
@@ -350,7 +351,7 @@ fn ActionsKeyInput(
                     value: current_value().count,
                 }
                 ActionsMillisInput {
-                    label: "Hold for",
+                    label: tr("Hold for"),
                     on_value: move |millis| {
                         let mut action = current_value.write();
                         action.key_hold_millis = millis;
@@ -360,8 +361,8 @@ fn ActionsKeyInput(
             }
             if bufferable() {
                 ActionsCheckbox {
-                    label: "Holding buffered",
-                    tooltip: "Require [Wait after buffered] to be enabled and without [Link key]. When enabled, the holding time will be added to [Wait after] during the last key use. Useful for holding down key and moving simultaneously.",
+                    label: tr("Holding buffered"),
+                    tooltip: tr("Require [Wait after buffered] to be enabled and without [Link key]. When enabled, the holding time will be added to [Wait after] during the last key use. Useful for holding down key and moving simultaneously."),
                     tooltip_side: ContentSide::Bottom,
                     on_checked: move |checked| {
                         let mut action = current_value.write();
@@ -375,7 +376,7 @@ fn ActionsKeyInput(
 
 
             ActionsKeyBindingInput {
-                label: "Link key",
+                label: tr("Link key"),
                 disabled: matches!(current_value().link_key, LinkKeyBinding::None),
                 on_value: move |key: Option<KeyBinding>| {
                     let mut action = current_value.write();
@@ -384,7 +385,7 @@ fn ActionsKeyInput(
                 value: current_value().link_key.key().unwrap_or_default(),
             }
             ActionsSelect::<LinkKeyBinding> {
-                label: "Link key type",
+                label: tr("Link key type"),
                 disabled: false,
                 on_selected: move |link_key: LinkKeyBinding| {
                     let mut action = current_value.write();
@@ -394,7 +395,7 @@ fn ActionsKeyInput(
             }
             if linkable() {
                 ActionsCheckbox {
-                    label: "Linked action",
+                    label: tr("Linked action"),
                     on_checked: move |is_linked: bool| {
                         let mut action = current_value.write();
                         action.condition = if is_linked {
@@ -413,7 +414,7 @@ fn ActionsKeyInput(
             // Use with, direction
 
             ActionsSelect::<ActionKeyWith> {
-                label: "Use with",
+                label: tr("Use with"),
                 disabled: false,
                 on_selected: move |with| {
                     let mut action = current_value.write();
@@ -423,7 +424,7 @@ fn ActionsKeyInput(
             }
             if directionable() {
                 ActionsSelect::<ActionKeyDirection> {
-                    label: "Use direction",
+                    label: tr("Use direction"),
                     disabled: false,
                     on_selected: move |direction| {
                         let mut action = current_value.write();
@@ -440,7 +441,7 @@ fn ActionsKeyInput(
             )
             {
                 ActionsCheckbox {
-                    label: "Queue to front",
+                    label: tr("Queue to front"),
                     on_checked: move |queue_to_front: bool| {
                         let mut action = current_value.write();
                         action.queue_to_front = Some(queue_to_front);
@@ -452,7 +453,7 @@ fn ActionsKeyInput(
             }
             if let ActionCondition::EveryMillis(millis) = current_value().condition {
                 ActionsMillisInput {
-                    label: "Use every",
+                    label: tr("Use every"),
                     on_value: move |millis| {
                         let mut action = current_value.write();
                         action.condition = ActionCondition::EveryMillis(millis);
@@ -464,7 +465,7 @@ fn ActionsKeyInput(
 
             // Wait before use
             ActionsMillisInput {
-                label: "Wait before use",
+                label: tr("Wait before use"),
                 on_value: move |millis| {
                     let mut action = current_value.write();
                     action.wait_before_use_millis = millis;
@@ -472,7 +473,7 @@ fn ActionsKeyInput(
                 value: current_value().wait_before_use_millis,
             }
             ActionsMillisInput {
-                label: "Wait random range",
+                label: tr("Wait random range"),
                 on_value: move |millis| {
                     let mut action = current_value.write();
                     action.wait_before_use_millis_random_range = millis;
@@ -483,7 +484,7 @@ fn ActionsKeyInput(
 
             // Wait after use
             ActionsMillisInput {
-                label: "Wait after use",
+                label: tr("Wait after use"),
                 on_value: move |millis| {
                     let mut action = current_value.write();
                     action.wait_after_use_millis = millis;
@@ -491,7 +492,7 @@ fn ActionsKeyInput(
                 value: current_value().wait_after_use_millis,
             }
             ActionsMillisInput {
-                label: "Wait random range",
+                label: tr("Wait random range"),
                 on_value: move |millis| {
                     let mut action = current_value.write();
                     action.wait_after_use_millis_random_range = millis;
@@ -500,8 +501,8 @@ fn ActionsKeyInput(
             }
             if bufferable() {
                 ActionsSelect::<WaitAfterBuffered> {
-                    label: "Wait after buffered",
-                    tooltip: "After the last key use, instead of waiting inplace, the bot is allowed to execute the next action partially. This can be useful for movable skill with casting animation.",
+                    label: tr("Wait after buffered"),
+                    tooltip: tr("After the last key use, instead of waiting inplace, the bot is allowed to execute the next action partially. This can be useful for movable skill with casting animation."),
                     disabled: false,
                     on_selected: move |wait_after_buffered: WaitAfterBuffered| {
                         let mut action = current_value.write();
@@ -519,9 +520,9 @@ fn ActionsKeyInput(
                     on_value((*current_value.peek(), value_condition));
                 },
                 if modifying() {
-                    "Save"
+                    {tr("Save")}
                 } else {
-                    "Add"
+                    {tr("Add")}
                 }
             }
             Button {
@@ -530,7 +531,7 @@ fn ActionsKeyInput(
                 on_click: move |_| {
                     on_cancel(());
                 },
-                "Cancel"
+                {tr("Cancel")}
             }
         }
     }
@@ -557,7 +558,7 @@ fn KeyPositionInput(value: WriteSignal<Option<Position>>) -> Element {
     rsx! {
         div { class: "grid grid-cols-2 gap-3",
             ActionsPositionInput {
-                label: "X",
+                label: tr("X"),
                 disabled: disabled(),
                 on_icon_click: disabled().not().then_some(handle_x_icon_click),
                 on_value: move |x| {
@@ -567,7 +568,7 @@ fn KeyPositionInput(value: WriteSignal<Option<Position>>) -> Element {
             }
 
             ActionsNumberInputI32 {
-                label: "X range",
+                label: tr("X range"),
                 disabled: disabled(),
                 on_value: move |x| {
                     update_position_optional(value, PositionUpdate::XRange(x));
@@ -577,7 +578,7 @@ fn KeyPositionInput(value: WriteSignal<Option<Position>>) -> Element {
         }
 
         ActionsPositionInput {
-            label: "Y",
+            label: tr("Y"),
             disabled: disabled(),
             on_icon_click: disabled().not().then_some(handle_y_icon_click),
             on_value: move |y| {
@@ -588,14 +589,14 @@ fn KeyPositionInput(value: WriteSignal<Option<Position>>) -> Element {
 
         div { class: "grid grid-cols-2 gap-3",
             ActionsCheckbox {
-                label: "Adjust",
+                label: tr("Adjust"),
                 disabled: disabled(),
                 on_checked: handle_adjusting_update,
                 checked: value().map(|pos| pos.allow_adjusting).unwrap_or_default(),
             }
 
             ActionsCheckbox {
-                label: "Positioned",
+                label: tr("Positioned"),
                 on_checked: handle_positioned_update,
                 checked: !disabled(),
             }

@@ -5,6 +5,7 @@ use crate::components::{
     button::{Button, ButtonStyle},
     text::TextInput,
 };
+use crate::i18n::tr;
 
 const BUTTON_CLASS: &str = "w-20 h-full flex-none";
 
@@ -75,7 +76,7 @@ pub fn NamedSelect(props: NamedSelectProps) -> Element {
                     State::Create { name, error } => rsx! {
                         TextInput {
                             class: "size-full",
-                            placeholder: "Enter a name...",
+                            placeholder: tr("Enter a name..."),
                             value: name,
                             disabled,
                             on_value: move |name| {
@@ -91,8 +92,8 @@ pub fn NamedSelect(props: NamedSelectProps) -> Element {
                 disabled,
                 on_click: handle_click_first,
                 match state() {
-                    State::Select => "Create",
-                    State::Create { .. } => "Save",
+                    State::Select => {tr("Create")},
+                    State::Create { .. } => {tr("Save")},
                 }
             }
             Button {
@@ -104,8 +105,8 @@ pub fn NamedSelect(props: NamedSelectProps) -> Element {
                 },
                 on_click: handle_click_second,
                 match state() {
-                    State::Select => "Delete",
-                    State::Create { .. } => "Cancel",
+                    State::Select => {tr("Delete")},
+                    State::Create { .. } => {tr("Cancel")},
                 }
             }
         }
