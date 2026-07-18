@@ -1,6 +1,5 @@
 use std::{
     collections::VecDeque,
-    debug_assert_matches,
     fmt::Debug,
     sync::{
         Arc,
@@ -1413,7 +1412,7 @@ fn priority_action(
     condition: ActionCondition,
     queue_to_front: bool,
 ) -> PriorityAction {
-    debug_crate::assert_matches!(
+    crate::assert_matches!(
         condition,
         ActionCondition::EveryMillis(_) | ActionCondition::ErdaShowerOffCooldown
     );
