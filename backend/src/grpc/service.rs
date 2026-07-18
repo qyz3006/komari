@@ -1,3 +1,5 @@
+#![allow(clippy::result_large_err)]
+
 use std::future::Future;
 
 use anyhow::Error;
